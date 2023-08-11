@@ -38,14 +38,14 @@ class Booking(models.Model):
     luggage_weight = models.FloatField()
 
 class Destination(models.Model):
-    name = models.CharField()
-    city = models.CharField()
-    state = models.CharField()
-    Country = models.CharField()
+    name = models.CharField(max_length=50)
+    city = models.CharField(max_length=50)
+    state = models.CharField(max_length=50)
+    Country = models.CharField(max_length=50)
 
 
 class Comment(models.Model):
-    content = models.CharField()
+    content = models.CharField(max_length=230)
     rating = models.IntegerField()
  
 
