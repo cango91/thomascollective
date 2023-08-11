@@ -24,3 +24,11 @@ $ \q # to quit psql shell
 + [Wireframes](https://app.moqups.com/zydknOceTn1aifT0uORbQN4cT4zzPNKf/edit/page/a73c8837f) on Moqup
 + [Presentation](https://docs.google.com/presentation/d/1u403N_MwglCmDOl0F7XIioxW4kPmkm6t_YmS8srrqQc/edit?usp=sharing) on Google Docs
 + [Materialize Docs](https://materializecss.com/getting-started.html)
+
+## Useful Scripts
++ `pull_merge.sh`: Replace your branch name at the top. Use `source pull_merge.sh` to do the following:
+  + `git checkout main`
+  + `git pull upstream main`
+  + `git push origin main`
+  + `git checkout your-branch-name`
+  + `git merge main`

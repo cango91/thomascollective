@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The Thomas Collective makes traveling via trains easier by enabling online booking, schedule tracking and train reviews">
+    <meta name="keywords" content="trains, we love, traveling, portfolio, Django, full CRUD, postgresql, postgres, travel app">
+    <!-- Compiled and minified Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <title>The Thomas Collective</title>
+    {% block header %}
+    {% endblock header %}
 </head>
 <body>
     <header class="navbar-fixed">
@@ -14,7 +20,9 @@
   </header>
   <main class="container">
     {% block content %}
-    {% endblock %}
+    {% endblock content %}
    </main>
+   <!-- Compiled and minified Materialize JavaScript at the end for optimized loading -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </body>
 </html>
