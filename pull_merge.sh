@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 # UPDATE THIS WITH YOUR BRANCH NAME
-BRANCH_NAME="john"
+BRANCH_NAME="noah"
 
 git checkout main
 git pull upstream main
