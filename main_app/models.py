@@ -1,6 +1,7 @@
 from django.db import models
 
 
+
 class Train(models.Model):
     name = models.CharField(max_length=50)
     railway = models.CharField(max_length=50)
