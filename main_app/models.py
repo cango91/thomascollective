@@ -45,7 +45,7 @@ class Destination(models.Model):
 
 
 class Comment(models.Model):
-    content = models.CharField(max_length=230)
+    content = models.CharField(max_length=50)
     rating = models.IntegerField()
  
 

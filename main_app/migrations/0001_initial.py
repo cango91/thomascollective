@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name='Comment',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('content', models.CharField()),
+                ('content', models.CharField(max_length=50)),
                 ('rating', models.IntegerField()),
             ],
         ),
@@ -24,10 +24,10 @@ class Migration(migrations.Migration):
             name='Destination',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField()),
-                ('city', models.CharField()),
-                ('state', models.CharField()),
-                ('Country', models.CharField()),
+                ('name', models.CharField(max_length=50)),
+                ('city', models.CharField(max_length=50)),
+                ('state', models.CharField(max_length=50)),
+                ('Country', models.CharField(max_length=50)),
             ],
         ),
         migrations.CreateModel(
