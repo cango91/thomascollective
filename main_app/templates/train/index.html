@@ -1,6 +1,28 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1> All Trains</h1>
-    
+<table class="highlight">
+    <thead>
+      <tr>
+          <th>Train Name</th>
+          <th>Trainline</th>
+          <th>Rating</th>
+          <th>Capacity</th>
+          <th>Cars</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for train in trains %}
+      <tr>
+        <td>{{train.name}}</td>
+        <td>{{train.railway}}</td>
+        <td>{{train.rating}}</td>
+        <td>{{train.capacity}}</td>
+        <td>{{train.cars}}</td>
+      </tr> 
+      {% endfor %}
+    </tbody>
+  </table>  
+ 
 
-{% endblock}
+{% endblock %}
