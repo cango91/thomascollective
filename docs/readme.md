@@ -7,3 +7,11 @@ Materialize is considered to be the main library for front-end styling.
 ## Varialbe Shorthands
 
 + Sched → Schedule
+
+
+## Useful Links
++ [ERD](https://lucid.app/lucidchart/9aa16864-362a-4073-8b12-7755305c9e2e/edit?invitationId=inv_e53fdd8b-770e-4018-8026-a34c5377115b&page=0_0#) on LucidCharts
++ [Trello Board](https://trello.com/b/eUnu8rCY/project-3)
++ [Wireframes](https://app.moqups.com/zydknOceTn1aifT0uORbQN4cT4zzPNKf/edit/page/a73c8837f) on Moqup
++ [Presentation](https://docs.google.com/presentation/d/1u403N_MwglCmDOl0F7XIioxW4kPmkm6t_YmS8srrqQc/edit?usp=sharing) on Google Docs
++ [Materialize Docs](https://materializecss.com/getting-started.html)
