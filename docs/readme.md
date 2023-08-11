@@ -4,6 +4,15 @@ This document tracks the decisions and notes of the dev team during development.
 ## Frontend
 Materialize is considered to be the main library for front-end styling.
 
+## Backend
+**DB name**: 'thomascollective'
+```bash
+$ createdb thomascollective
+$ psql
+$ \l # to confirm db was created successfully locally
+$ \q # to quit psql shell
+```
+
 ## Varialbe Shorthands
 
 + Sched → Schedule
