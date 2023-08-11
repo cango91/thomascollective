@@ -10,7 +10,7 @@ class TrainCreate(CreateView):
     fields = '__all__'
 
 def train_index(request):
-    train = Train.objects.all()
-    return render(request, 'trains/index.html', {
+    trains = Train.objects.all()
+    return render(request, 'train/index.html', {
         'trains': trains
     } )
