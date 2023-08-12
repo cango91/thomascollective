@@ -32,3 +32,5 @@ $ \q # to quit psql shell
   + `git push origin main`
   + `git checkout your-branch-name`
   + `git merge main`
+
++ `seed_trains.py`: Seed your db with multiple trains. Edit the trains array to your liking, then run `python3 seed_trains.py`. It will first check if a train with the same name exists (I'm guessing most of us already have 'Thomas' 😁) if not create a new record

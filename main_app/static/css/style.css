@@ -1,0 +1,30 @@
+img.ttc-logo {
+    height: 128px;
+    width: 128px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+}
+
+/* This is about the med breakpoint for Materialize */
+@media screen and (max-width: 991.98px) {
+    img.ttc-logo {
+        height: 80px;
+        width: 80px;
+    }
+}
+
+/* This is about the sm/xs breakpoint for Materialize */
+@media screen and (max-width: 600.98px) {
+    img.ttc-logo {
+        height: 64px;
+        width: 64px;
+    }
+}
+
+.mt-1{
+    margin-top: 0.25rem !important;
+}
+
+.ml-1{
+    margin-left: 0.25rem !important ;
+}
