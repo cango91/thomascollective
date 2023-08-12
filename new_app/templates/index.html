@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% load static %}
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/table-styles.css' %}">
+<script src="{% static 'js/dynamic-table.js' %}"></script>
+{% endblock header %}
+{% block content %}
+    <h1>All Trains</h1>
+    <div class="container" id="table-container"></div>
+    <script>
+    // We define our headers as such (instead of putting them in <thead><th>Train Name</th>... like we did)
+    // The script will handle creating the table and adding it to the DOM
+    const headers = [
+    {
+        text: 'Train Name',
+        sort: {
+            sortBy: 'name'
+        },
+    },
+    {
+        text: 'Railway',
+        sort: {
+            sortBy: 'railway'
+        }
+    },
+    {
+        text: 'Cars',
+        sort: {
+            sortBy: 'cars'
+        },
+    },
+    {
+        text: 'Passenger Capacity',
+        sort: {
+            sortBy: 'capacity'
+        }
+    },
+    {
+        text: 'Train Rating',
+        sort:{
+            sortBy: 'rating',
+        }
+    }
+    ];
+
+    // Then, we define a default options for table as such:
+    const options = {
+        url: "{% url 'dynamic:api.all_trains' %}", // this is the url that will be formatted with sorting query params and passed to our FetchFunction
+        /* 
+        The pagination options: Pagination is done on the server-side, not client-side
+        What this means is we won't be getting the whole Trains.objects.all() at one time, instead we'll be asking the server to:
+        `Send me perPage number of data, starting from page` (in the options I named it limit instead of perPage, can easily rename)
+        pageCount is just what the page will display as page `1 of x` while waiting for data to arrive from the backend
+        We don't have to define it, but then it will show `page 1 of undefined` until data arrives
+        */
+        page: 1,
+        pageCount: 1,
+        limit: 10,
+        // The default sorting we want. User will be able to change it, but when the page first loads, this will be the sorting rule we want from the backend
+        sort: {
+            sortBy: 'rating',
+            asc: false,
+        }
+    };
+    /*
+    Next, we define a FetchFunction, which is the main actor of this dynamic table.
+    It will be given a formattedUrl (which has the default pagination and sorting parameters set)
+    and the options as well, so we can modify the link as we see fit in this function.
+    This function is responsible for actually asking data from the server, and parsing its results into an array.
+    It is also responsible for updating the pagination options 
+    ie. let's say we have 50 objects in our Train.objects.all() QuerySet and we set perPage to 10 and page to 1.
+    The server should send us back a json as such:
+    {
+        page: 1,
+        perPage: 10,
+        pageCount: 5,
+        data: [] // this will be the actual Train data in an array
+    } 
+    We'll use the returned data to update our table options, parse the data and transform it into an array of arrays,
+    which should have the same number of rows as there are items in data. Each row array should have the same number
+    of items as there are headers.
+    So basically we're doing the following:
+     <tbody>
+      {% for train in trains %}
+      <tr>
+        <td>{{train.name}}</td>
+        <td>{{train.railway}}</td>
+        <td>{{train.rating}}</td>
+        <td>{{train.capacity}}</td>
+        <td>{{train.cars}}</td>
+      </tr> 
+      {% endfor %}
+    </tbody>
+    but for a variable amount of data, that is responsive to user input.
+    */
+    // this can either be an async function, or return a Promise
+    // script handles both. For simplicity and readability I prefer async here
+    const fetchFunction = async (tableOptions, formattedUrl) => {
+        try{
+            const response = await fetch(formattedUrl); // since this is a GET request, this is enough
+            if(response.ok){
+                // parse the response into a json
+                const responseJson = await response.json();
+                const rows = [];
+
+                // now we push data for each row our table should display
+                // we recieved the data as a serialized json object, so we deserialize them
+                const data = JSON.parse(responseJson.data)
+                data.forEach(train => {
+                    rows.push([train.fields.name, train.fields.railway, train.fields.cars, train.fields.capacity, train.fields.rating]);
+                });
+                // finally, we update the table options data so it reflects the current state
+                tableOptions.limit = responseJson.perPage ? responseJson.perPage : tableOptions.limit;
+                tableOptions.pageCount = responseJson.pageCount ? responseJson.pageCount : tableOptions.pageCount;
+                tableOptions.page = responseJson.page ? responseJson.page : tableOptions.page;
+                return rows;
+            }else{
+                throw new Error('Bad Response recieved from server');
+            }
+        }catch(e){
+            // Display any errors (we can use Materialize's cool stylings for this)
+            // for simplicity I'll just console.log it
+            console.error(e);
+        }
+    }
+
+    /*
+    Phew.. That was a lot, right. But it's simple, and just boilerplate. We can take this further sortBy
+    providing a default Fetch function if all our data will be returned in a similar format, making
+    this boiler plate much less tedious (then we can just define headers and options).   
+    Anywho, we can now create our dynamic table as follows:
+    */
+    const dynamicTableHandler = tableHandler(
+        document.getElementById('table-container'), // parent element to append the table to
+        'trains-table', // an id for the table
+        null, // an optional caption. Can be null,
+        options, // table options we defined previously
+        fetchFunction, // the async function that gets the data we defined earlier
+        headers,    // headers to display
+        ['highlight'] // optional classes to pass in to table
+    );
+    
+    </script>
+{% endblock content %}

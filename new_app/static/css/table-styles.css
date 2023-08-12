@@ -1,0 +1,29 @@
+
+.visible{
+    visibility: visible;
+}
+
+.hidden{
+    visibility: hidden;
+}
+
+.table-sort{
+    white-space: nowrap;
+}
+
+.d-flex{
+    display: flex;
+}
+
+.justify-content-around{
+    justify-content: space-around;
+}
+
+.mx-2{
+    margin-left: 2rem;
+    margin-right: 2rem;
+}
+
+.mt-2{
+    margin-top: 2rem;
+}
