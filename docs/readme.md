@@ -1,3 +1,7 @@
+# NOTICE! IMPORTANT! MUST READ! BEFORE MIGRATE:
+Make sure you have at least 2 users before running `python3 manage.py migrate`
+You can create a second superuser with `python3 manage.py createsuperuser`
+
 # DEV Logs
 This document tracks the decisions and notes of the dev team during development.
 

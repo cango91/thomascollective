@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from .models import Train, Schedule, Route, Booking
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
+
 
 def home(request):
     return render(request, 'home.html')
