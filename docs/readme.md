@@ -13,6 +13,17 @@ $ \l # to confirm db was created successfully locally
 $ \q # to quit psql shell
 ```
 
+### Authorization Scheme
+To enable different user roles, here is a proposed Scheme using built-in Group permissions logic in Django:
+**Superuser**: Creates Railways and Railways' Groups
+**Railway User Group**: Each Railway Owner belongs to their respective Railway Group. They can:
++ Add trains (only for their respective Railway Co.)
++ Add routes for trains (of their own Railways)
++ Add schedules to their routes
+**Regular User**: Regular users (without any groups assigned, or assigned the Visitor Group?) will have READ-ONLY permissions on trains, routes, schedules. They will have full CRUD on their own tickets/bookingss
+
+`#TODO: Read up on groups and learn implement `
+
 ## Varialbe Shorthands
 
 + Sched → Schedule
