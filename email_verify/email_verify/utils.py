@@ -7,7 +7,8 @@ from .exceptions import *
 def generate_token(user, domain=None):
     if domain is None and not settings.DEBUG:
         raise ValueError("Domain must be provided in production environment.")
-    s = Serializer(settings.SECRET_KEY, expires_in=3600)
+    expires = getattr(settings,'EMAIL_VERIFY_EXPIRES_IN',3600)
+    s = Serializer(settings.SECRET_KEY, expires_in=expires)
     return s.dumps({'user_id': user.id, 'domain': domain}).decode('utf-8')
 
 

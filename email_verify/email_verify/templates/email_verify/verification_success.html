@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block email_verify_content %}
+<div class="message-container">
+    <div class="message">
+        <h1>Your e-mail has been verified.</h1>
+        {% if error %}
+            <p><a href="{% static '/' %}">Click here</a> to go to main page</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock email_verify_content %}
+
