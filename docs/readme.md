@@ -1,3 +1,7 @@
+# NOTICE! IMPORTANT! MUST READ! BEFORE MIGRATE:
+Make sure you have at least 2 users before running `python3 manage.py migrate`
+You can create a second superuser with `python3 manage.py createsuperuser`
+
 # DEV Logs
 This document tracks the decisions and notes of the dev team during development.
 
@@ -12,6 +16,17 @@ $ psql
 $ \l # to confirm db was created successfully locally
 $ \q # to quit psql shell
 ```
+
+### Authorization Scheme
+To enable different user roles, here is a proposed Scheme using built-in Group permissions logic in Django:
+**Superuser**: Creates Railways and Railways' Groups
+**Railway User Group**: Each Railway Owner belongs to their respective Railway Group. They can:
++ Add trains (only for their respective Railway Co.)
++ Add routes for trains (of their own Railways)
++ Add schedules to their routes
+**Regular User**: Regular users (without any groups assigned, or assigned the Visitor Group?) will have READ-ONLY permissions on trains, routes, schedules. They will have full CRUD on their own tickets/bookingss
+
+`#TODO: Read up on groups and learn implement `
 
 ## Varialbe Shorthands
 
@@ -32,3 +47,5 @@ $ \q # to quit psql shell
   + `git push origin main`
   + `git checkout your-branch-name`
   + `git merge main`
+
++ `seed_trains.py`: Seed your db with multiple trains. Edit the trains array to your liking, then run `python3 seed_trains.py`. It will first check if a train with the same name exists (I'm guessing most of us already have 'Thomas' 😁) if not create a new record
