@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
+
 <h1> All Trains</h1>
-<table class="highlight">
+<table class="highlight" id="click">
     <thead>
       <tr>
           <th>Train Name</th>
@@ -9,20 +10,29 @@
           <th>Rating</th>
           <th>Capacity</th>
           <th>Cars</th>
+          <th> </th>
       </tr>
     </thead>
     <tbody>
       {% for train in trains %}
       <tr>
-        <td>{{train.name}}</td>
+        <td><a href="{% url 'train_detail' train.id %}">{{train.name}}</a></td>
         <td>{{train.railway}}</td>
         <td>{{train.rating}}</td>
         <td>{{train.capacity}}</td>
         <td>{{train.cars}}</td>
-      </tr> 
+        <td> </td>
+      </tr>
       {% endfor %}
     </tbody>
   </table>
+  <!-- <script>
+    const table = document.getElementById('click');
+    table.addEventListener('click', function(evt){
+    if (evt.target.dataset['data-url'])
+    console.log(data-url);
+    })
+  </script> -->
  
 
 {% endblock %}
