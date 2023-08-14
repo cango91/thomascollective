@@ -1,38 +1,37 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block content %}
-
-<h1> All Trains</h1>
-<table class="highlight" id="click">
+  <h1>All Trains</h1>
+  <table class="highlight" id="click">
     <thead>
       <tr>
-          <th>Train Name</th>
-          <th>Trainline</th>
-          <th>Rating</th>
-          <th>Capacity</th>
-          <th>Cars</th>
-          <th> </th>
+        <th>Train Name</th>
+        <th>Trainline</th>
+        <th>Rating</th>
+        <th>Capacity</th>
+        <th>Cars</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
       {% for train in trains %}
-      <tr>
-        <td><a href="{% url 'train_detail' train.id %}">{{train.name}}</a></td>
-        <td>{{train.railway}}</td>
-        <td>{{train.rating}}</td>
-        <td>{{train.capacity}}</td>
-        <td>{{train.cars}}</td>
-        <td> </td>
-      </tr>
+        <tr data-url="{% url 'train_detail' train.id %}" class="clickable">
+          <td>{{ train.name }}</td>
+          <td>{{ train.railway }}</td>
+          <td>{{ train.rating }}</td>
+          <td>{{ train.capacity }}</td>
+          <td>{{ train.cars }}</td>
+          <td></td>
+        </tr>
       {% endfor %}
     </tbody>
   </table>
-  <!-- <script>
+  <script>
     const table = document.getElementById('click');
-    table.addEventListener('click', function(evt){
-    if (evt.target.dataset['data-url'])
-    console.log(data-url);
-    })
-  </script> -->
- 
 
-{% endblock %}
+    table.addEventListener('click', function(evt){
+      if(evt.target.closest('tr').dataset.url){
+        window.location.href = evt.target.closest('tr').dataset.url;
+      };
+    });
+  </script>
+{% endblock content %}

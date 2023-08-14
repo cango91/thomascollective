@@ -40,24 +40,23 @@
               <a href="{% url 'home' %}">Home</a>
             </li>
             {% if user.is_authenticated %}
-            <li>
-              <a href="{% url 'index' %}">All Trains</a>
-            </li>
-            <li>
-              <a href="{% url 'train_create' %}">Add a Train</a>
-            </li>
-            <li>
-              <a href="{% url 'logout' %}">Logout</a>
-            </li>
+              <li>
+                <a href="{% url 'index' %}">All Trains</a>
+              </li>
+              <li>
+                <a href="{% url 'train_create' %}">Add a Train</a>
+              </li>
+              <li>
+                <a href="{% url 'logout' %}">Logout</a>
+              </li>
             {% else %}
-            <li>
-              <a href="{% url 'signup' %}">Signup</a>
-            </li>
-            <li>
-              <a href="{% url 'login' %}">Login</a>
-            </li>
+              <li>
+                <a href="{% url 'signup' %}">Signup</a>
+              </li>
+              <li>
+                <a href="{% url 'login' %}">Login</a>
+              </li>
             {% endif %}
-
           </ul>
         </div>
       </nav>
@@ -67,22 +66,22 @@
         <a href="{% url 'home' %}">Home</a>
       </li>
       {% if user.is_authenticated %}
-      <li>
-        <a href="{% url 'index' %}">All Trains</a>
-      </li>
-      <li>
-        <a href="{% url 'train_create' %}">Add a Train</a>
-      </li>
-      <li>
-        <a href="{% url 'logout' %}">Logout</a>
-      </li>
+        <li>
+          <a href="{% url 'index' %}">All Trains</a>
+        </li>
+        <li>
+          <a href="{% url 'train_create' %}">Add a Train</a>
+        </li>
+        <li>
+          <a href="{% url 'logout' %}">Logout</a>
+        </li>
       {% else %}
-      <li>
-        <a href="{% url 'signup' %}">Signup</a>
-      </li>
-      <li>
-        <a href="{% url 'login' %}">Login</a>
-      </li>
+        <li>
+          <a href="{% url 'signup' %}">Signup</a>
+        </li>
+        <li>
+          <a href="{% url 'login' %}">Login</a>
+        </li>
       {% endif %}
     </ul>
     <main class="container">
