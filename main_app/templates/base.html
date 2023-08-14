@@ -1,34 +1,86 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="The Thomas Collective makes traveling via trains easier by enabling online booking, schedule tracking and train reviews">
-    <meta name="keywords" content="trains, we love, traveling, portfolio, Django, full CRUD, postgresql, postgres, travel app">
+    <meta name="description"
+          content="The Thomas Collective makes traveling via trains easier by enabling online booking, schedule tracking and train reviews">
+    <meta name="keywords"
+          content="trains, we love, traveling, portfolio, Django, full CRUD, postgresql, postgres, travel app">
     <!-- Compiled and minified Materialize CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+    <link rel="shortcut icon"
+          href="{% static 'images/favicon.png' %}"
+          type="image/x-icon">
     <title>The Thomas Collective</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block header %}
     {% endblock header %}
-</head>
-<body>
+  </head>
+  <body>
     <header class="navbar-fixed">
-        <nav>
-          <div class="nav-wrapper">
-            <ul>
-              <li><a href="{%url 'home'%}">Home</a></li>
-              <li><a href="{%url 'index'%}">All Trains</a></li>
-              <li><a href="{%url 'train_create' %}">Add a Train</a></li>
-              
-            </ul>
+      <nav>
+        <div class="nav-wrapper">
+          <a href="#!" class="brand-logo mt-1 ml-1">
+            <img src="{% static 'images/logolarge.webp' %}"
+                 height=""
+                 width=""
+                 alt="brand logo"
+                 class="ttc-logo">
+            <!--It's good practice to have h/w for <img> elements-->
+          </a>
+          <a href="#" data-target="mobile-navbar" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+          <ul class="right hide-on-med-and-down">
+            <li>
+              <a href="{% url 'home' %}">Home</a>
+            </li>
+            <li>
+              <a href="{% url 'index' %}">All Trains</a>
+            </li>
+            <li>
+              <a href="{% url 'train_create' %}">Add a Train</a>
+            </li>
+            <li>
+              <a href="{% url 'signup' %}">Signup</a>
+            </li>
+          </ul>
         </div>
-    </nav>
-  </header>
-  <main class="container">
-    {% block content %}
-    {% endblock content %}
-   </main>
-   <!-- Compiled and minified Materialize JavaScript at the end for optimized loading -->
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-</body>
+      </nav>
+    </header>
+    <ul class="sidenav" id="mobile-navbar">
+      <li>
+        <a href="{% url 'home' %}">Home</a>
+      </li>
+      <li>
+        <a href="{% url 'index' %}">All Trains</a>
+      </li>
+      <li>
+        <a href="{% url 'train_create' %}">Add a Train</a>
+      </li>
+    </ul>
+    <main class="container">
+      {% block content %}
+      {% endblock content %}
+    </main>
+    <!-- Compiled and minified Materialize JavaScript at the end for optimized loading -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+      // from Materialize documentation, the way to initialize collapsible sidenav
+      document.addEventListener('DOMContentLoaded', function() {
+        const elems = document.querySelectorAll('.sidenav');
+        const instances = M.Sidenav.init(elems,{preventScrolling: false});
+        // 992 is the breakpoint for med size. If the window is resized while the sidenav is open autoclose it
+        window.addEventListener('resize', function() {
+          if (window.innerWidth  > 991.98 && instances[0].isOpen) {
+            instances[0].close();
+          }
+        });
+      });
+    </script>
+  </body>
 </html>
