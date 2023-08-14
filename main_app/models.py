@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 
 class Train(models.Model):
@@ -9,6 +10,12 @@ class Train(models.Model):
     capacity = models.IntegerField()
     rating = models.FloatField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, default = 2)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('train_detail', kwargs={'train_id': self.id})
 
 class Route(models.Model):
     name = models.CharField(max_length= 50)

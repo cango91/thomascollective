@@ -10,13 +10,19 @@ def home(request):
  
 class TrainCreate(CreateView):
     model = Train
-    fields = '__all__'
+    fields = ['name', 'railway', 'rating', 'capacity', 'cars']
+    template_name = 'train/train_form.html'
 
 def train_index(request):
     trains = Train.objects.all()
     return render(request, 'train/index.html', {
         'trains': trains
     } )
+
+def train_detail(request, train_id):
+    train = Train.objects.get(id=train_id)
+    return render(request, 'train/train_detail.html', {'train': train})
+
 
 
 def signup(request):
