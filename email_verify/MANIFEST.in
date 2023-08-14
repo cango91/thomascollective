@@ -1,0 +1,2 @@
+include email_verify/templates/*
+include email_verify/static/*
