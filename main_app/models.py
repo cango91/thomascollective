@@ -1,15 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
-
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils.timezone import now
 
 class Train(models.Model):
     name = models.CharField(max_length=50)
     railway = models.CharField(max_length=50)
     cars = models.IntegerField()
     capacity = models.IntegerField()
-    rating = models.FloatField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, default = 2)
+
+    def get_rating(self):
+        return 5
 
     def __str__(self):
         return self.name
@@ -57,8 +60,10 @@ class Destination(models.Model):
 
 
 class Comment(models.Model):
-    content = models.CharField(max_length=50)
-    rating = models.IntegerField()
+    train = models.ForeignKey(Train, on_delete=models.CASCADE, default=1)
+    content = models.CharField(max_length=250)
+    rating = models.IntegerField(validators= [MinValueValidator(1), MaxValueValidator(5)])
+    date = models.DateField(default=now)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default = 2)
  
 

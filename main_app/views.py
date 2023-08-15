@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
-from .models import Train, Schedule, Route, Booking
+from .models import Train, Schedule, Route, Booking, Comment
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
+from .forms import CommentForm
+from django.contrib.auth.decorators import login_required
 
 
 def home(request):
@@ -10,7 +12,7 @@ def home(request):
  
 class TrainCreate(CreateView):
     model = Train
-    fields = ['name', 'railway', 'rating', 'capacity', 'cars']
+    fields = ['name', 'railway','capacity', 'cars']
     template_name = 'train/train_form.html'
 
 def train_index(request):
@@ -21,7 +23,11 @@ def train_index(request):
 
 def train_detail(request, train_id):
     train = Train.objects.get(id=train_id)
-    return render(request, 'train/train_detail.html', {'train': train})
+    Comments = train.comment_set.all()
+    form = CommentForm()
+
+    return render(request, 'train/train_detail.html', {'train': train, 'form': form})
+
 
 
 
@@ -44,4 +50,13 @@ def signup(request):
   context = {'form': form, 'error_message': error_message}
   return render(request, 'registration/signup.html', context)
 
+@login_required
+def add_comment(request, train_id):
+   form = CommentForm(request.POST)
+   if form.is_valid():
+      comment = form.save(commit= False)
+      comment.user = request.user
+      comment.save()
 
+
+      return redirect('train_detail', train_id=train_id)

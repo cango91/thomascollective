@@ -5,9 +5,28 @@
 <ul>
     <li>NAME: {{train.name}}</li>
     <li>RAILWAY: {{train.railway}}</li>
-    <li>RATING: {{train.rating}}</li>
+    <li>RATING: {{train.get_rating}}</li>
     <li>CAPACITY: {{train.capacity}}</li>
     <li>CARS: {{train.cars}}</li> 
+    <li>COMMENTS:</li>
+    <ul>
+    {% for comment in train.comment_set.all %}
+    <div class='card'> 
+        <li>User:{{comment.user}}</li>
+        <li>Date:{{comment.date}}</li>  
+        <li>Comment:{{comment.content}}</li>  
+    </div>
+
+
+        {% endfor %}
+    </ul>
 </ul>
+
+<form id="comment-form" action="{% url 'add_comment' train.id %}" method='POST'>
+  {% csrf_token %}
+
+    <table> {{ form.as_table }}</table>
+    <input type="submit" value="Submit!" class="btn" >
+</form>
 
 {% endblock %}
