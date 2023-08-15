@@ -86,9 +86,9 @@ DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.postgresql',
     'NAME': 'thomascollective',
-    'USER': 'LiterallyASandwich',
-    'PASSWORD': 'k2UyWtT9AziE',
-    'HOST': 'ep-morning-boat-74010864.us-east-2.aws.neon.tech',
+    'USER': os.environ['DB_USER'],
+    'PASSWORD': os.environ['DB_PW'],
+    'HOST': os.environ['DB_HOST'],
     'PORT': '5432',
   }
 }
