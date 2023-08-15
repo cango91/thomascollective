@@ -21,7 +21,7 @@ def seed_trains():
             print(f"train named {train['name']} already exists with id: {t.id}")
         except Train.DoesNotExist as e:
             Train.objects.create(name=train['name'], railway=train['railway'],
-                                 cars=train['cars'], capacity=train['capacity'], rating=train['rating'])
+                                 cars=train['cars'], capacity=train['capacity'])
             print(f"Train {train['name']} created")
     print("Trains seeded")
     
