@@ -1,21 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
-
-<h1> Edit Comment for this Train? </h1>
-<ul>
-    <li>NAME: {{comment.train.name}}</li>
-    <li>RAILWAY: {{comment.train.railway}}</li>
-    <li>RATING: {{comment.train.get_rating}}</li>
-    <li>CAPACITY: {{comment.train.capacity}}</li>
-    <li>CARS: {{comment.train.cars}}</li> 
-</ul>
-
-<form id="comment-form" action="{% url 'update_comment' comment.id %}" method='POST'>
-    {% csrf_token %}
-  
-      <table> {{ form.as_table }}</table>
-      <input type="submit" value="Submit!" class="btn" >
-
-</form>
-
+    <h1>Edit Comment for this Train?</h1>
+    {% if error %}
+        <div class="card">
+            <p class="red-text">{{ error }}</p>
+        </div>
+    {% endif %}
+    <ul>
+        <li>NAME: {{ comment.train.name }}</li>
+        <li>RAILWAY: {{ comment.train.railway }}</li>
+        <li>RATING: {{ comment.train.get_rating }}</li>
+        <li>CAPACITY: {{ comment.train.capacity }}</li>
+        <li>CARS: {{ comment.train.cars }}</li>
+    </ul>
+    <form id="comment-form"
+          action="{% url 'update_comment' comment.id %}"
+          method='POST'>
+        {% csrf_token %}
+        <table>
+            {{ form.as_table }}
+        </table>
+        <input type="submit" value="Submit!" class="btn">
+    </form>
 {% endblock content %}
