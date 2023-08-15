@@ -42,19 +42,28 @@ class CommentUpdate(UpdateView):
 
 
 def update_comment(request, pk):
-    comment = get_object_or_404(Comment, id=pk)
-    comment_dict = {'content': comment.content, 'rating': comment.rating}
-    form = CommentForm(comment_dict)
     if request.method == 'POST':
+      form = CommentForm(request.POST)
+      #comment = form.save(commit=False)
+      comment = get_object_or_404(Comment, id=pk)
+      if form.is_valid():
         if not comment.user == request.user:
-            error_msg = "You are not allowed to edit this comment, because it does not belong to you"
-            return render(request, 'comment/edit_comment.html', {'form': form, 'comment': comment, 'error': error_msg})
+          error_msg = "You are not allowed to edit this comment, because it does not belong to you"
+          return render(request, 'comment/edit_comment.html', {'form': form, 'comment': comment, 'error': error_msg})
         comment.content = request.POST.get('content')
+        comment.rating = request.POST.get('rating')
         comment.date = now()
         comment.save()
         return redirect(reverse('train_detail', kwargs={'train_id': comment.train.id}))
+      else:
+        error_msg = 'Invalid values'
+        return render(request, 'comment/edit_comment.html', {'form': form, 'comment': comment, 'error': error_msg})
+
     else:
-        return render(request, 'comment/edit_comment.html', {'form': form, 'comment': comment})
+      comment = get_object_or_404(Comment, id=pk)
+      comment_dict = {'content': comment.content, 'rating': comment.rating}
+      form = CommentForm(comment_dict)
+      return render(request, 'comment/edit_comment.html', {'form': form, 'comment': comment})
 
 
 class CommentDelete(DeleteView):
