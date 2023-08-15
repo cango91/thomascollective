@@ -65,7 +65,9 @@ class Comment(models.Model):
     rating = models.IntegerField(validators= [MinValueValidator(1), MaxValueValidator(5)])
     date = models.DateField(default=now)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default = 2)
- 
+    
+    def get_absolute_url(self):
+        return reverse('train_detail', kwargs={'train_id': self.train.id})
 
 
 

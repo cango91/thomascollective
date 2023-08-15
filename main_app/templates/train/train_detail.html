@@ -12,9 +12,15 @@
     <ul>
     {% for comment in train.comment_set.all %}
     <div class='card'> 
+        <div class="card-content">
         <li>User:{{comment.user}}</li>
         <li>Date:{{comment.date}}</li>  
         <li>Comment:{{comment.content}}</li>  
+        </div>
+        <div class="card-action">
+            <a href="{% url 'update_comment' comment.id %}">Edit</a>
+            <a href="{% url 'delete_comment' comment.id %}">Delete</a>
+        </div>
     </div>
 
 
