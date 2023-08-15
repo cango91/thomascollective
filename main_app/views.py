@@ -1,4 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponseForbidden
+from django.utils.timezone import now
 from .models import Train, Schedule, Route, Booking, Comment
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth import login
@@ -32,6 +34,21 @@ class CommentUpdate(UpdateView):
    model = Comment
    fields = ['content', 'rating']
    template_name = 'comment/edit_comment.html'
+   
+def update_comment(request,pk):
+  comment = get_object_or_404(Comment,id=pk)
+  comment_dict = {'content': comment.content, 'rating': comment.rating }
+  form = CommentForm(comment_dict)
+  if request.method == 'POST':
+    if not comment.user == request.user:
+      error_msg = "You are not allowed to edit this comment, because it does not belong to you"
+      return render(request, 'comment/edit_comment.html', {'form': form, 'comment': comment, 'error': error_msg})
+    comment.content = request.POST.get('content')
+    comment.date = now()
+    comment.save()
+    return redirect(reverse('train_detail',kwargs={'train_id': comment.train.id}))
+  else:
+    return render(request, 'comment/edit_comment.html', {'form': form, 'comment': comment})
    
 class CommentDelete(DeleteView):
    model = Comment
