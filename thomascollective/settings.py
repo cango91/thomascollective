@@ -9,6 +9,14 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import os
+
+from pathlib import Path
+
+# Add these 3 lines of code
+import environ
+environ.Env()
+environ.Env.read_env()
 
 from pathlib import Path
 
@@ -75,10 +83,14 @@ WSGI_APPLICATION = 'thomascollective.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'thomascollective',
-    }
+  'default': {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': 'thomascollective',
+    'USER': 'LiterallyASandwich',
+    'PASSWORD': 'k2UyWtT9AziE',
+    'HOST': 'ep-morning-boat-74010864.us-east-2.aws.neon.tech',
+    'PORT': '5432',
+  }
 }
 
 
