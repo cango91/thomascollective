@@ -5,7 +5,7 @@ from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from .forms import CommentForm
 from django.contrib.auth.decorators import login_required
-
+from django.urls import reverse
 
 def home(request):
     return render(request, 'home.html')
@@ -28,7 +28,15 @@ def train_detail(request, train_id):
 
     return render(request, 'train/train_detail.html', {'train': train, 'form': form})
 
-
+class CommentUpdate(UpdateView):
+   model = Comment
+   fields = ['content', 'rating']
+   template_name = 'comment/edit_comment.html'
+   
+class CommentDelete(DeleteView):
+   model = Comment
+   template_name = 'comment/confirm_comment_delete.html'
+   success_url = 'https://www.subway.com/en-us?utm_source=bing&utm_medium=cpc&utm_term=subway%20com_exact&utm_content=brand&utm_campaign=&cid=0:0:00:0:nat-us:0&0=0&gclid=eda71fd3e2d01efd63ec7b08791cf243&gclsrc=3p.ds&msclkid=eda71fd3e2d01efd63ec7b08791cf243'
 
 
 def signup(request):

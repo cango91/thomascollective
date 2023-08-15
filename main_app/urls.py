@@ -9,4 +9,6 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
 	path('trains/<int:train_id>/', views.train_detail, name='train_detail'),
     path('trains/<int:train_id>/comment', views.add_comment, name='add_comment'),
+    path('comment/<int:pk>/update', views.CommentUpdate.as_view(), name='update_comment'),
+    path('comment/<int:pk>/delete', views.CommentDelete.as_view(), name = 'delete_comment'),
  ]
