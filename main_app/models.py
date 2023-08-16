@@ -74,6 +74,8 @@ class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default = 2)
     seat_number = models.CharField(max_length=10,default='A1')
     booking_time = models.DateTimeField(default=now)
+    number_of_passengers = models.IntegerField(default=1, validators=[MinValueValidator(1)])
+    luggage_weight = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     
     def __str__(self):
         return f"{self.user.username} - {self.journey}"

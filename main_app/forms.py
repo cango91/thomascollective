@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Train, Comment
+from .models import Train, Comment, Booking
 
 
 class TrainForm(forms.ModelForm):
@@ -13,3 +13,9 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['content', 'rating']
+
+
+class BookingForm(forms.ModelForm):
+    class Meta:
+        model = Booking
+        fields = '__all__'

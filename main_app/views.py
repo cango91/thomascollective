@@ -5,7 +5,7 @@ from .models import Train, Route, Booking, Comment, Journey
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
-from .forms import CommentForm
+from .forms import CommentForm, BookingForm
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
@@ -109,5 +109,14 @@ def journey_index(request):
 def journey_detail(request, journey_id):
     journey = get_object_or_404(Journey, id=journey_id)
     stops = journey.route.stationorder_set.all()
-
     return render(request, 'journey/journey_detail.html', {'journey': journey, "stops": stops})
+
+@login_required
+def create_booking(request, journey_id):
+    user = request.user
+    journey = Journey.objects.get(id=journey_id)
+    fields = {'journey':journey, 'user':user}
+    booking = BookingForm(fields)
+    stops = journey.route.stationorder_set.all()
+    if request.method == "GET":
+        return render(request, 'booking/booking.html', {'booking': booking, 'journey':journey, 'stops':stops})

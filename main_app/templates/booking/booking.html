@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>GET YOUR TRIP READY</h1>
+
+<ul>
+    <li>
+       <ul>
+         {% for stop in stops %}
+         <li>Station: {{stop.station}}</li>
+         <li>Arrival Time: {{stop.arrival_time}}</li>
+         <li>Departure Time: {{stop.departure_time}}</li>
+         {% endfor %}
+       </ul>
+       <ul>
+         <li>Journey Info: {{booking.journey}}</li>
+         <li>Name of Passenger: {{booking.user.username}}</li>
+         <li>Number of Passengers: {{booking.number_of_passengers}}</li>
+         <li>Luggage Weight: {{booking.luggage_weight}}</li>
+        </ul>
+
+    </li>
+
+</ul>
+
+{% endblock content %}
