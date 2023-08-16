@@ -30,33 +30,38 @@ class Train(models.Model):
 class Route(models.Model):
     name = models.CharField(max_length= 50)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default = 2)
+    train = models.ForeignKey(Train, on_delete=models.CASCADE, default = 1)
 
-class Schedule(models.Model):
-    train = models.ForeignKey(
-        Train,
-        on_delete= models.CASCADE, default = 2
-    )
-    route = models.ForeignKey(
-        Route, 
-        on_delete= models.CASCADE, default = 2
-    )
-    departure_datetime = models.DateField('Departure Date')
-    arrival_datetime = models.DateField('Arrival Date')
-    base_fare = models.IntegerField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default = 2)
+    def __str__(self):
+        return self.name
+
+# class Schedule(models.Model):
+#     train = models.ForeignKey(
+#         Train,
+#         on_delete= models.CASCADE, default = 2
+#     )
+#     route = models.ForeignKey(
+#         Route, 
+#         on_delete= models.CASCADE, default = 2
+#     )
+#     departure_datetime = models.DateField('Departure Date')
+#     arrival_datetime = models.DateField('Arrival Date')
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, default = 2)
+    
 
 
 
 
 class Booking(models.Model):
-    schedule = models.ForeignKey(
-        Schedule, 
-        on_delete = models.CASCADE, default = 2
-    )
+    # schedule = models.ForeignKey(
+    #     Schedule, 
+    #     on_delete = models.CASCADE, default = 2
+    #)
     num_passengers = models.IntegerField()
     fare = models.FloatField()
     luggage_weight = models.FloatField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, default = 2)
+    train = models.ForeignKey(Train, on_delete=models.CASCADE, default = 1)
 
 class Destination(models.Model):
     name = models.CharField(max_length=50)
@@ -64,6 +69,10 @@ class Destination(models.Model):
     state = models.CharField(max_length=50)
     Country = models.CharField(max_length=50)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default = 2)
+    routes = models.ManyToManyField(Route, through='RouteDestinationSchedule')
+
+    def __str__(self):
+        return self.name
 
 
 class Comment(models.Model):
@@ -75,6 +84,13 @@ class Comment(models.Model):
     
     def get_absolute_url(self):
         return reverse('train_detail', kwargs={'train_id': self.train.id})
+
+
+class RouteDestinationSchedule(models.Model):
+    route = models.ForeignKey(Route, on_delete=models.CASCADE)
+    destination = models.ForeignKey(Destination, on_delete=models.CASCADE)
+    date_time_arrival = models.DateTimeField()
+    date_time_departure = models.DateTimeField()
 
 
 
