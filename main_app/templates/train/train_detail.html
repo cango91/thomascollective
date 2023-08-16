@@ -1,38 +1,59 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
+{% block header %}
+    <script src="{% static 'js/star-ratings.js' %}" defer></script>
+{% endblock header %}
 {% block content %}
-
-<h1> Train Detail </h1>
-<ul>
-    <li>NAME: {{train.name}}</li>
-    <li>RAILWAY: {{train.railway}}</li>
-    <li>RATING: {{train.get_rating}}</li>
-    <li>CAPACITY: {{train.capacity}}</li>
-    <li>CARS: {{train.cars}}</li> 
-    <li>COMMENTS:</li>
+    <h1>Train Detail</h1>
     <ul>
-    {% for comment in train.comment_set.all %}
-    <div class='card'> 
-        <div class="card-content">
-        <li>User:{{comment.user}}</li>
-        <li>Date:{{comment.date}}</li>  
-        <li>Comment:{{comment.content}}</li>  
-        </div>
-        <div class="card-action">
-            <a href="{% url 'update_comment' comment.id %}">Edit</a>
-            <a href="{% url 'delete_comment' comment.id %}">Delete</a>
-        </div>
-    </div>
-
-
-        {% endfor %}
+        <li>
+            <strong>NAME:</strong> {{ train.name }}
+        </li>
+        <li>
+            <strong>RAILWAY:</strong> {{ train.railway }}
+        </li>
+        <li>
+            <strong>RATING:</strong> <span class="star-rating">{{ train.get_rating }}</span>
+        </li>
+        <li>
+            <strong>CAPACITY:</strong> {{ train.capacity }}
+        </li>
+        <li>
+            <strong>CARS:</strong> {{ train.cars }}
+        </li>
+        <li class="mt-1">
+            <strong><b>COMMENTS</b></strong>
+        </li>
+        <ul>
+            <hr>
+            <div class="container left mb-1">
+                <form id="comment-form"
+                      action="{% url 'add_comment' train.id %}"
+                      method="post">
+                    {% csrf_token %}
+                    <table>
+                        {{ form.as_table }}
+                    </table>
+                    <input type="submit" value="Submit!" class="btn mb-1 mt-1">
+                </form>
+                {% for comment in train.comment_set.all %}
+                    <div class="card">
+                        <div class="card-content">
+                            <span class="card-title"><strong>{{ comment.user }}</strong><small> on {{ comment.date }}</small></span>
+                            <li>
+                            <span class="star-rating">{{ comment.rating }}</span>
+                            </li>
+                            <li class="mt-1">
+                                {{ comment.content }}
+                            </li>
+                        </div>
+                        <div class="card-action">
+                            <a href="{% url 'update_comment' comment.id %}">Edit</a>
+                            <a href="{% url 'delete_comment' comment.id %}">Delete</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </ul>
     </ul>
-</ul>
-
-<form id="comment-form" action="{% url 'add_comment' train.id %}" method='POST'>
-  {% csrf_token %}
-
-    <table> {{ form.as_table }}</table>
-    <input type="submit" value="Submit!" class="btn" >
-</form>
-
-{% endblock %}
+{% endblock content %}
