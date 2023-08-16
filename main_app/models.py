@@ -27,56 +27,6 @@ class Train(models.Model):
     def get_absolute_url(self):
         return reverse('train_detail', kwargs={'train_id': self.id})
 
-class Route(models.Model):
-    name = models.CharField(max_length= 50)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default = 2)
-    train = models.ForeignKey(Train, on_delete=models.CASCADE, default = 1)
-
-    def __str__(self):
-        return self.name
-
-# class Schedule(models.Model):
-#     train = models.ForeignKey(
-#         Train,
-#         on_delete= models.CASCADE, default = 2
-#     )
-#     route = models.ForeignKey(
-#         Route, 
-#         on_delete= models.CASCADE, default = 2
-#     )
-#     departure_datetime = models.DateField('Departure Date')
-#     arrival_datetime = models.DateField('Arrival Date')
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, default = 2)
-    
-
-class SchedulingInfo(models.Model):
-    arrival = models.DateTimeField(blank=True, null=True)
-    departure = models.DateTimeField(blank=True, null=True)
-
-
-class Booking(models.Model):
-    # schedule = models.ForeignKey(
-    #     Schedule, 
-    #     on_delete = models.CASCADE, default = 2
-    #)
-    num_passengers = models.IntegerField()
-    fare = models.FloatField()
-    luggage_weight = models.FloatField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default = 2)
-    train = models.ForeignKey(Train, on_delete=models.CASCADE, default = 1)
-
-class Destination(models.Model):
-    name = models.CharField(max_length=50)
-    city = models.CharField(max_length=50)
-    state = models.CharField(max_length=50)
-    Country = models.CharField(max_length=50)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default = 2)
-    routes = models.ManyToManyField(Route, through='RouteDestinationSchedule')
-
-    def __str__(self):
-        return self.name
-
-
 class Comment(models.Model):
     train = models.ForeignKey(Train, on_delete=models.CASCADE, default=1)
     content = models.CharField(max_length=250)
@@ -88,11 +38,49 @@ class Comment(models.Model):
         return reverse('train_detail', kwargs={'train_id': self.train.id})
 
 
-class RouteDestinationSchedule(models.Model):
-    route = models.ForeignKey(Route, on_delete=models.CASCADE)
-    destination = models.ForeignKey(Destination, on_delete=models.CASCADE)
-    scheduling_info = models.ForeignKey(SchedulingInfo,on_delete=models.PROTECT,blank=True,null=True)
-
-
 
 # Create your models here.
+class Route(models.Model):
+    train = models.ForeignKey(Train, on_delete=models.CASCADE)
+    distance = models.DecimalField(default=0,max_digits=8, decimal_places=2)
+    
+    def __str__(self):
+        return f"Route for {self.train}"
+    
+class StationOrder(models.Model):
+    route = models.ForeignKey(Route, on_delete=models.CASCADE)
+    station = models.ForeignKey('Station', on_delete=models.CASCADE)
+    order = models.PositiveIntegerField()
+    arrival_time = models.DateTimeField()
+    departure_time = models.DateTimeField()
+    
+    class Meta:
+        ordering = ['order']
+        
+    def __str__(self):
+        return f"{self.route.train} - {self.station} ({self.order})"
+    
+class Journey(models.Model):
+    train = models.ForeignKey(Train, on_delete=models.CASCADE)
+    route = models.OneToOneField(Route, on_delete=models.CASCADE)
+    departure_time = models.DateTimeField()
+    arrival_time = models.DateTimeField()
+    
+    def __str__(self):
+        return f"{self.train} - {self.route}"
+    
+class Booking(models.Model):
+    journey = models.ForeignKey(Journey, on_delete=models.CASCADE,default=1)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default = 2)
+    seat_number = models.CharField(max_length=10,default='A1')
+    booking_time = models.DateTimeField(default=now)
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.journey}"
+    
+class Station(models.Model):
+    name = models.CharField(max_length=100)
+    code = models.CharField(max_length=10, unique=True)
+    
+    def __str__(self):
+        return self.name
