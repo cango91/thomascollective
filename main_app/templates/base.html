@@ -45,10 +45,13 @@
 
             {% if user.is_authenticated %}
               <li>
-                <a href="{% url 'index' %}">All Trains</a>
+                <a href="{% url 'index' %}">All Trains</a>                
               </li>
               <li>
                 <a href="{% url 'train_create' %}">Add a Train</a>
+              </li>
+              <li>
+                <a href="{% url 'journey_index' %}">Journeys</a>
               </li>
               <li>
                 <a href="{% url 'logout' %}">Logout</a>
