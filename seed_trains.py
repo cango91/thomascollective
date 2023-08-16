@@ -6,7 +6,7 @@ trains = [
     {"name": "Subway", "railway": "SEI", "cars": 12, "capacity": 304, "rating": 4.9},
     {"name": "PC-Train", "railway": "SP", "cars": 1, "capacity": 4, "rating": 0.3},
     {"name": "Panda Express", "railway": "PET", "cars": 10, "capacity": 250, "rating": 5.0},
-    
+
 ]
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE','thomascollective.settings')
