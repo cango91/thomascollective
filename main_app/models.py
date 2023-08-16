@@ -49,7 +49,9 @@ class Route(models.Model):
 #     user = models.ForeignKey(User, on_delete=models.CASCADE, default = 2)
     
 
-
+class SchedulingInfo(models.Model):
+    arrival = models.DateTimeField(blank=True, null=True)
+    departure = models.DateTimeField(blank=True, null=True)
 
 
 class Booking(models.Model):
@@ -89,8 +91,7 @@ class Comment(models.Model):
 class RouteDestinationSchedule(models.Model):
     route = models.ForeignKey(Route, on_delete=models.CASCADE)
     destination = models.ForeignKey(Destination, on_delete=models.CASCADE)
-    date_time_arrival = models.DateTimeField()
-    date_time_departure = models.DateTimeField()
+    scheduling_info = models.ForeignKey(SchedulingInfo,on_delete=models.PROTECT,blank=True,null=True)
 
 
 
