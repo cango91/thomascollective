@@ -13,6 +13,9 @@ from django.urls import reverse
 def home(request):
     return render(request, 'home.html')
 
+def about(request):
+  return render(request, 'about.html')
+
 
 class TrainCreate(CreateView):
     model = Train
