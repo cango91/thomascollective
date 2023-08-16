@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Journey Detail</h1>
+    <ul>
+        <li>
+            <strong>NAME:</strong> {{ journey.train.name }}
+        </li>
+        <li>
+            <strong>Route:</strong> {{ journey.route }}
+            <ul>
+            {% for stop in stops %}
+            <li>Station: {{stop.station}}</li>
+            <li>Arrival Time: {{stop.arrival_time}}</li>
+            <li>Departure Time: {{stop.departure_time}}</li>
+            {% endfor %}
+            </ul>
+        </li>
+
+   </ul>
+<form>
+<input type="submit" value="Book Now!" class="btn mb-1 mt-1">
+
+</form>
+    
+         
+
+
+
+
+{% endblock content %}
