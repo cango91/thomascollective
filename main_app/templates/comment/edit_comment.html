@@ -1,4 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
+{% block header %}
+<script src="{% static 'js/star-ratings.js' %}" defer></script>
+{% endblock header %}
 {% block content %}
     <h1>Edit Comment for this Train?</h1>
     {% if error %}
@@ -15,7 +19,7 @@
     </ul>
     <form id="comment-form"
           action="{% url 'update_comment' comment.id %}"
-          method='POST'>
+          method='post'>
         {% csrf_token %}
         <table>
             {{ form.as_table }}

@@ -21,23 +21,54 @@ img.ttc-logo {
     }
 }
 
-.mt-1{
+.mt-1 {
     margin-top: 0.25rem !important;
 }
 
-.mb-1{
+.mb-1 {
     margin-bottom: 0.25rem !important;
 }
 
-.ml-1{
-    margin-left: 0.25rem !important ;
+.ml-1 {
+    margin-left: 0.25rem !important;
 }
 
-.clickable{
+.clickable {
     cursor: pointer;
 }
 
-span.star-rating *{
+span.star-rating * {
     vertical-align: middle;
     color: goldenrod;
+}
+
+.star-container {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.star-container * {
+    vertical-align: middle;
+    color: goldenrod;
+}
+
+.star-container:not(.editing) .star:not(.star-filled)::after{
+    content: 'star_border';
+}
+
+.star-container:not(.editing) .star:is(.star-filled)::after{
+    content: 'star';
+}
+
+.star-container.editing .star::after {
+    content: "star_border";
+}
+
+.star-container.editing .star:hover~.star::after {
+    content: "star";
+}
+
+.star-container.editing .star:hover::after {
+    content: "star";
+    cursor: pointer;
 }
