@@ -39,7 +39,7 @@ img.ttc-logo {
 
 span.star-rating * {
     vertical-align: middle;
-    color: goldenrod;
+    color: #daa520;
 }
 
 .star-container {
@@ -49,7 +49,7 @@ span.star-rating * {
 
 .star-container * {
     vertical-align: middle;
-    color: goldenrod;
+    color: #daa520;
 }
 
 .star-container:not(.editing) .star:not(.star-filled)::after{
