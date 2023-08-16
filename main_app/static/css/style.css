@@ -25,10 +25,19 @@ img.ttc-logo {
     margin-top: 0.25rem !important;
 }
 
+.mb-1{
+    margin-bottom: 0.25rem !important;
+}
+
 .ml-1{
     margin-left: 0.25rem !important ;
 }
 
 .clickable{
     cursor: pointer;
+}
+
+span.star-rating *{
+    vertical-align: middle;
+    color: goldenrod;
 }
