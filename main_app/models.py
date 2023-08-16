@@ -12,7 +12,14 @@ class Train(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default = 2)
 
     def get_rating(self):
-        return 5
+        # get all comments for this trains 'rating' field, and give it as a flat list (default gives a list of tuples)
+        ratings_list = self.comment_set.all().values_list('rating', flat=True)
+        count = len(ratings_list)
+        if not count:
+            return 0
+        total_rating = sum(ratings_list)
+        average_rating = total_rating / count
+        return average_rating
 
     def __str__(self):
         return self.name
