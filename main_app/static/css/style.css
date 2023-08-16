@@ -25,8 +25,20 @@ img.ttc-logo {
     margin-top: 0.25rem !important;
 }
 
+.mr-1 {
+    margin-right: 0.25rem !important;
+}
+
+.mr-2 {
+    margin-right: 0.5rem !important;
+}
+
 .mb-1 {
     margin-bottom: 0.25rem !important;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem !important;
 }
 
 .ml-1 {
@@ -52,11 +64,11 @@ span.star-rating * {
     color: #daa520;
 }
 
-.star-container:not(.editing) .star:not(.star-filled)::after{
+.star-container:not(.editing) .star:not(.star-filled)::after {
     content: 'star_border';
 }
 
-.star-container:not(.editing) .star:is(.star-filled)::after{
+.star-container:not(.editing) .star:is(.star-filled)::after {
     content: 'star';
 }
 
@@ -71,4 +83,10 @@ span.star-rating * {
 .star-container.editing .star:hover::after {
     content: "star";
     cursor: pointer;
+}
+
+.page-footer{
+    position: absolute;
+    width: 100%;
+    bottom: 0 !important;
 }
