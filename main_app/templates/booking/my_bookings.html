@@ -10,6 +10,7 @@
             <li>departure: {{booking.journey.departure_time}}</li>
             <li>arrival: {{booking.journey.arrival_time}}</li>
             <li>seat number: {{booking.seat_number}}</li>
+            <li>Price: {{ booking.price }}</li> 
         </ul>
         <div class="card">
             <a href="{% url 'update_my_bookings' booking.id %}">Update Booking</a>
