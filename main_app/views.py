@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import get_list_or_404, render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
 from django.utils.timezone import now
 from .models import Train, Route, Booking, Comment, Journey
@@ -8,10 +8,12 @@ from django.contrib.auth.forms import UserCreationForm
 from .forms import CommentForm, BookingForm
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
+from django.http import JsonResponse
 
 
 def home(request):
     return render(request, 'home.html')
+
 
 def about(request):
     return render(request, 'about.html')
@@ -94,17 +96,20 @@ def add_comment(request, train_id):
 
     return redirect('train_detail', train_id=train_id)
 
+
 def journey_index(request):
     journeys = Journey.objects.all()
     return render(request, 'journey/journey.html', {
         'journeys': journeys
     })
 
+
 def journey_detail(request, journey_id):
     journey = get_object_or_404(Journey, id=journey_id)
     stops = journey.route.stationorder_set.all()
     booking_form = BookingForm()
-    return render(request, 'journey/journey_detail.html', {'journey': journey, "stops": stops, 'booking_form':booking_form})
+    return render(request, 'journey/journey_detail.html', {'journey': journey, "stops": stops, 'booking_form': booking_form})
+
 
 @login_required
 def create_booking(request, journey_id):
@@ -115,8 +120,26 @@ def create_booking(request, journey_id):
     if booking.is_valid():
         booking.save()
         return redirect(reverse('my_bookings'))
-    return render(request, 'journey/journey_detail.html', {'journey': journey, 'booking_form': booking, 'stops':journey.route.stationorder_set.all(), 'error':'Invalid Form Data'})
+    return render(request, 'journey/journey_detail.html', {'journey': journey, 'booking_form': booking, 'stops': journey.route.stationorder_set.all(), 'error': 'Invalid Form Data'})
+
 
 @login_required
 def my_bookings(request):
-    return render(request,'booking/my_bookings.html')
+    return render(request, 'booking/my_bookings.html')
+
+### AJAX ENDPOINTS ###
+
+
+def getAllStopsForJourney(request, journey_id):
+    stops = get_object_or_404(
+        Route, id=journey_id).route.stationorder_set.all()
+    stops_list = [{'station': stop.name, 'arrival': stop.arrival_time,
+                   'departure': stop.departure_time} for stop in stops]
+    return JsonResponse({'status': 200, 'data': stops_list})
+
+
+def getAllJourneys(request):
+    journeys = get_list_or_404(Journey)
+    journeys_list = [{'train': journey.train.name, 'route': journey.route,
+                      'departure': journey.departure_time, 'arrival': journey.arrival_time} for journey in journeys]
+    return JsonResponse({'status': 200, 'data': journeys_list})

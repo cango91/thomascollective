@@ -5,6 +5,7 @@
 {% endblock header %}
 {% block content %}
   <h1>All Journeys</h1>
+  <div id="table-container"></div>
   <table class="highlight" id="click">
     <thead>
       <tr>
@@ -25,8 +26,115 @@
       {% endfor %}
     </tbody>
   </table>
-
+<!-- Modal Structure -->
+<div id="stops-modal" class="modal bottom-sheet">
+  <div class="modal-content">
+    <h4 class="header" id="modal-header"></h4>
+    <div id="modal-body">
+      <table>
+        <thead>
+          <tr>
+            <th>Station</th>
+            <th>Arrival</th>
+            <th>Departure</th>
+          </tr>
+        </thead>
+        <tbody id="modal-table-body">
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+  </div>
+</div>
   <script>
+
+    const showError = (error) =>{
+      const toast = `<p class="red-text">An error has occured:<span style="color:white;">${error}. <br>Please try again</span></p>`
+      M.toast({html: toast});
+    }
+
+    const showStopsModal = ({route,stops}) =>{
+      document.getElementById('modal-header').textContent = `${route} - All Stops`;
+      const tbody = document.getElementById('modal-table-body');
+      while(tbody.firstChild){
+        tbody.firstChild.remove();
+      }
+      stops.forEach(stop => {
+        const tr = document.createElement('tr');
+        stop.forEach(data => {
+          const td = document.createElement('td');
+          td.textContent = data;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(td);
+      });
+      M.Modal.getInstance(document.getElementById('stops-modal')).open();
+    }
+
+    const stopsParseFunction = (data,td,tr) =>{
+      const a = document.createElement('a');
+      a.className = 'btn';
+      a.dataset.journeyId = data.journeyId;
+      a.href="#!"
+      a.textContent = "See all stops"
+      a.addEventListener('click', async evt=>{
+        // fetch all stops for route of journey
+        try{
+          const response = await fetch("{% url 'all_stops_for_journey' evt.target.dataset.journeyId %}");
+          if(!response.ok) throw new Error(await response.text());
+          try{
+            const jsonData = await response.json();
+            console.log(jsonData);            
+          }catch(e){
+            showError(`Couldn't parse JSON<br>${e}`);
+          }
+        }catch(e){
+          showError(`Couldn't fetch data<br>${e}`);
+        }
+        // display modal
+
+      })
+    }
+
+    const tableHeaders = [
+    {
+      text: "Train Name",
+      sort: {
+        sortBy:"train__name"
+      },
+    },
+    {
+      text: 'Route',
+      sort: {
+        sortBy: 'route'
+      }
+    },
+    {
+      text: 'Departure',
+      sort:{
+        sortBy: 'departure_time'
+      }
+    },
+    {
+      text: 'Arrival',
+      sort: {
+        sortBy: 'arrival_time'
+      }
+    },
+    {
+      text: 'Stops',
+      parseFunction: stopsParseFunction
+    }
+    ];
+
+    const fetchFunction = async (opts, url) =>{
+
+    }
+
+    
+
     const table = document.getElementById('click');
 
     table.addEventListener('click', function(evt){
