@@ -119,9 +119,9 @@ def create_booking(request, journey_id):
     journey = Journey.objects.get(id=journey_id)
     booking_form = BookingForm(request.POST)
     booking_form.instance.journey = journey
-    booking_form.instance.price = booking_form.instance.number_of_passengers * 10.
+    booking_form.instance.price = booking_form.instance.number_of_passengers * Decimal(10)
     booking_form.instance.user = request.user
-    print(booking_form.instance)
+    print(booking_form.instance.price)
     if booking_form.is_valid():
         booking_form.save()
         return redirect(reverse('my_bookings'))
