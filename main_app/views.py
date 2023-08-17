@@ -132,6 +132,18 @@ def my_bookings(request):
     print(allbookings)
     return render(request, 'booking/my_bookings.html', {'allbookings':allbookings})
 
+def update_my_bookings(request, booking_id):
+    booking = Booking.objects.get(id=booking_id)
+    if request.method == 'POST':
+        form = BookingForm(request.POST, instance=booking)
+        if form.is_valid():
+            form.save()
+            return ('my_bookings')
+    else:
+        form = BookingForm(instance=booking)
+    return redirect('booking/update_my_bookings.html',{'form':form, 'booking_id':booking_id})
+
+
 ### AJAX ENDPOINTS ###
 
 

@@ -18,4 +18,5 @@ urlpatterns = [
     path('booking/my_bookings', views.my_bookings, name='my_bookings'),
     path('ajax/journeys/<int:journey_id>/stops', views.getAllStopsForJourney, name='all_stops_for_journey'),
     path('ajax/journeys/', views.getAllJourneys, name='all_journeys'),
+    path('booking/my_bookings/<int:booking_id>/update', views.update_my_bookings, name='update_my_bookings'),
 ]
