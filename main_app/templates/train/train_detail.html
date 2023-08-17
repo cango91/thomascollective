@@ -36,7 +36,7 @@
                     </table>
                     <input type="submit" value="Submit!" class="btn mb-1 mt-1">
                 </form>
-                {% for comment in train.comment_set.all %}
+                {% for comment in train.comments.all %}
                     <div class="card">
                         <div class="card-content">
                             <span class="card-title"><strong>{{ comment.user }}</strong><small> on {{ comment.date }}</small></span>
