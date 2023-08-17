@@ -2,11 +2,12 @@
 {% load static %}
 {% block header %}
 <script src="{% static 'js/dynamic-table.js' %}" defer></script>
+<script src="{% static 'js/utils.js' %}"></script>
 {% endblock header %}
 {% block content %}
   <h1>All Journeys</h1>
   <div id="table-container"></div>
-  <table class="highlight" id="click">
+  {% comment %} <table class="highlight" id="click">
     <thead>
       <tr>
         <th>Train Name</th>
@@ -25,7 +26,7 @@
         </tr>
       {% endfor %}
     </tbody>
-  </table>
+  </table> {% endcomment %}
 <!-- Modal Structure -->
 <div id="stops-modal" class="modal bottom-sheet">
   <div class="modal-content">
@@ -45,7 +46,7 @@
     </div>
   </div>
   <div class="modal-footer">
-    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
   </div>
 </div>
   <script>
@@ -63,39 +64,45 @@
       }
       stops.forEach(stop => {
         const tr = document.createElement('tr');
-        stop.forEach(data => {
-          const td = document.createElement('td');
-          td.textContent = data;
-          tr.appendChild(td);
-        });
-        tbody.appendChild(td);
+        let stationTd = document.createElement('td');
+        let arrivalTd = document.createElement('td');
+        let departTd = document.createElement('td');
+        stationTd.innerText = stop.station;
+        arrivalTd.innerText = getDatetime(stop.arrival);
+        departTd.innerText = getDatetime(stop.departure);
+        tr.append(stationTd,arrivalTd,departTd)
+        
+        tbody.appendChild(tr);
       });
       M.Modal.getInstance(document.getElementById('stops-modal')).open();
     }
 
     const stopsParseFunction = (data,td,tr) =>{
       const a = document.createElement('a');
-      a.className = 'btn';
+      a.className = 'btn btn-small';
       a.dataset.journeyId = data.journeyId;
       a.href="#!"
       a.textContent = "See all stops"
       a.addEventListener('click', async evt=>{
         // fetch all stops for route of journey
         try{
-          const response = await fetch("{% url 'all_stops_for_journey' evt.target.dataset.journeyId %}");
+          const response = await fetch(`/ajax/journeys/${evt.target.dataset.journeyId}/stops`);
           if(!response.ok) throw new Error(await response.text());
           try{
             const jsonData = await response.json();
-            console.log(jsonData);            
+            // display modal
+            showStopsModal({route: jsonData.data.route, stops: jsonData.data.stops})   
           }catch(e){
             showError(`Couldn't parse JSON<br>${e}`);
           }
         }catch(e){
           showError(`Couldn't fetch data<br>${e}`);
         }
-        // display modal
-
-      })
+      });
+      td.appendChild(a);
+      tr.classList.add('clickable');
+      tr.dataset.url = `/journeys/${data.journeyId}`
+      tr.appendChild(td);
     }
 
     const tableHeaders = [
@@ -129,19 +136,64 @@
     }
     ];
 
-    const fetchFunction = async (opts, url) =>{
+    const fetchFunction = async (tableOptions, formattedUrl) => {
+      try{
+          const response = await fetch(formattedUrl); 
+          if(response.ok){
+              const responseJson = await response.json();
+              const rows = [];
+              const data = responseJson.data;
+              data.forEach(journey => {
+                  rows.push([journey.train, journey.route, getDatetime(journey.departure), getDatetime(journey.arrival), {journeyId: journey.id}]);
+              });
+              tableOptions.limit = responseJson.perPage ? responseJson.perPage : tableOptions.limit;
+              tableOptions.pageCount = responseJson.pageCount ? responseJson.pageCount : tableOptions.pageCount;
+              tableOptions.page = responseJson.page ? responseJson.page : tableOptions.page;
+              return rows;
+          }else{
+              throw new Error('Bad Response recieved from server');
+          }
+      }catch(e){
+          showError(e);
+      }
+  }
 
+    const tableOptions = {
+      url: "{% url 'all_journeys' %}",
+      limit: 5,
+      page: 1,
+      pageCount: 0,
+      sort: {
+        sortBy: 'train__name'
+      }
     }
 
+    document.addEventListener("DOMContentLoaded", ()=>{
+      const handler = tableHandler(
+        document.getElementById('table-container'),
+        'journeys-table',
+        null,
+        tableOptions,
+        fetchFunction,
+        tableHeaders,
+        ['striped']
+      );
+
+      const modal = document.getElementById('stops-modal');
+      const instance = M.Modal.init(modal);
+      const table = document.getElementById('journeys-table-data-body');
+
+      table.addEventListener('click', function(evt){
+        console.log(evt.target)
+        if(evt.target.dataset.journeyId) return;
+        const url = evt.target.closest('tr').dataset.url;
+        if (url) {
+          window.location.href = url;
+        }
+      });
+    })
     
 
-    const table = document.getElementById('click');
-
-    table.addEventListener('click', function(evt){
-      const url = evt.target.closest('tr').dataset.url;
-      if (url) {
-        window.location.href = url;
-      }
-    });
+    
   </script>
 {% endblock content %}

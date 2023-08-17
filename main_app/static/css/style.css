@@ -150,3 +150,7 @@ span.star-rating * {
     transform: rotate(-180deg);
     transition: all 0.3s;
 }
+
+.header{
+    color: #ee6e73;
+}

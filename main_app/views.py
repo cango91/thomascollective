@@ -1,5 +1,6 @@
 from django.shortcuts import get_list_or_404, render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
+from django.core.paginator import Paginator
 from django.utils.timezone import now
 from .models import Train, Route, Booking, Comment, Journey
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -131,15 +132,33 @@ def my_bookings(request):
 
 
 def getAllStopsForJourney(request, journey_id):
-    stops = get_object_or_404(
-        Route, id=journey_id).route.stationorder_set.all()
-    stops_list = [{'station': stop.name, 'arrival': stop.arrival_time,
-                   'departure': stop.departure_time} for stop in stops]
-    return JsonResponse({'status': 200, 'data': stops_list})
+    try:
+        route = Journey.objects.get(id=journey_id).route
+    except:
+        return JsonResponse({'status':404, 'error':'Journey/Route not found'})
+    stops = route.stationorder_set.all().values_list('station__name','arrival_time','departure_time')
+    stops_list = [{'station': stop[0], 'arrival': stop[1],'departure': stop[2]} for stop in stops]
+    return JsonResponse({'status': 200, 'data': {'stops': stops_list, 'route':str(route)},})
 
 
 def getAllJourneys(request):
-    journeys = get_list_or_404(Journey)
-    journeys_list = [{'train': journey.train.name, 'route': journey.route,
-                      'departure': journey.departure_time, 'arrival': journey.arrival_time} for journey in journeys]
-    return JsonResponse({'status': 200, 'data': journeys_list})
+    # get query parameters
+    sortBy = request.GET.get('sortBy','departure_time')
+    order = request.GET.get('order', 'ascending')
+    orderStr = f"{'-' if order =='descending'  else ''}{sortBy}"
+    
+    try:
+        journeys = Journey.objects.all().order_by(orderStr)
+    except:
+        return JsonResponse({'status':404, 'error':'No Journeys in DB'})
+
+    # paginate
+    page = request.GET.get('page',1)
+    perPage = request.GET.get('limit', 10)
+    
+    paginator = Paginator(journeys,perPage)
+    data = paginator.page(page)    
+    
+    journeys_list = [{'train': str(journey.train.name), 'route': str(journey.route),
+                      'departure': str(journey.departure_time), 'arrival': str(journey.arrival_time), 'id':journey.id} for journey in data]
+    return JsonResponse({'status': 200, 'data': journeys_list, 'page':page, 'pageCount':paginator.num_pages, 'limit':perPage })
