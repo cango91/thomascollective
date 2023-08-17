@@ -12,21 +12,15 @@
         <th>Route</th>
         <th>Departure Time</th>
         <th>Arrival Time</th>
-        <th></th>
       </tr>
     </thead>
     <tbody>
       {% for journey in journeys %}
-        
         <tr data-url="{% url 'journey_detail' journey.id %}" class="clickable">
-         <div class="collapsible-header">
           <td>{{ journey.train.name }}</td>
           <td>{{ journey.route }}</td>
           <td>{{ journey.departure_time }}</td>
           <td>{{ journey.arrival_time }}</td>
-         
-         <td></td>
-         </div>
         </tr>
       {% endfor %}
     </tbody>

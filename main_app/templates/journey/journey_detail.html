@@ -1,31 +1,80 @@
 {% extends "base.html" %}
 {% block content %}
-
-<h1>Journey Detail</h1>
-    <ul>
-        <li>
-            <strong>NAME:</strong> {{ journey.train.name }}
-        </li>
-        <li>
-            <strong>Route:</strong> {{ journey.route }}
+    <h1 class="center">Journey Details</h1>
+    <div class="container">
+    <div class="card mb-5">
+        <div class="card-title center">
+            <b>{{ journey.train.name }}</b>
+        </div>
+        <div class="card-content">
             <ul>
-            {% for stop in stops %}
-            <li>Station: {{stop.station}}</li>
-            <li>Arrival Time: {{stop.arrival_time}}</li>
-            <li>Departure Time: {{stop.departure_time}}</li>
-            {% endfor %}
+                <li>
+                    Leaves from <b>{{ stops.first }}</b> @ {{ stops.first.departure_time }}
+                </li>
+                <li>
+                    Arrives at <b>{{ stops.last }}</b> @ {{ stops.last.arrival_time }}
+                </li>
             </ul>
-        </li>
+        </div>
+        <div class="card-title ml-2">
+            <b>All Stops:</b>
+        </div>
+        <div class="card-content">
+            <table class="striped">
+                <thead>
+                    <tr>
+                        <th>Stop Name</th>
+                        <th>Arrival</th>
+                        <th>Departure</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stop in stops %}
+                        <tr>
+                            <td>{{ stop.station }}</td>
+                            <td>{{ stop.arrival_time }}</td>
+                            <td>{{ stop.departure_time }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% comment %} <div class="card-actions center">
+            <form action="{% url 'create_booking' journey.id %}">
+                <input type="submit" value="Book Now!" class="btn mb-1 mt-1">
+            </form>
+        </div> {% endcomment %}
+        <ul class="collapsible">
+            <li>
+                <div class="collapsible-header">
+                    <i class="material-icons">whatshot</i>Book Your Ticket Now <i class="right caret collapsed"></i>
+                </div>
+                <div class="collapsible-body">
+                    <form method="post" action="{% url 'create_booking' journey.id %}">
+                        {% csrf_token %}
+                        {{ booking_form.as_p }}
+                        <input type="submit" value="Book Now" class="btn mb-1">
+                    </form>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const caret = document.querySelector('.caret')
+            const elem = document.querySelector('.collapsible');
+            const instance = M.Collapsible.init(elem, {
+                accordion: true,
+                onOpenStart: () => caret.classList.remove('collapsed'),
+                onCloseStart: () => caret.classList.add('collapsed'),
+            });
 
-   </ul>
-<form action="{% url 'create_booking' journey.id %}">
-  <input type="submit" value="Book Now!" class="btn mb-1 mt-1">
+            {% if error %}
+            const toast = `<p class="red-text">An error has occured:<span style="color:white;"> {{ error }}. <br>Please try again</span></p>`
+            M.toast({html: toast});
+            {% endif %}
 
-</form>
-    
-         
-
-
-
-
+          });
+    </script>
 {% endblock content %}

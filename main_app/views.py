@@ -38,12 +38,6 @@ def train_detail(request, train_id):
     return render(request, 'train/train_detail.html', {'train': train, 'comments': comments, 'form': form})
 
 
-class CommentUpdate(UpdateView):
-    model = Comment
-    fields = ['content', 'rating']
-    template_name = 'comment/edit_comment.html'
-
-
 def update_comment(request, pk):
     if request.method == 'POST':
         form = CommentForm(request.POST)
@@ -71,7 +65,7 @@ def update_comment(request, pk):
 class CommentDelete(DeleteView):
     model = Comment
     template_name = 'comment/confirm_comment_delete.html'
-    success_url = 'https://www.subway.com/en-us?utm_source=bing&utm_medium=cpc&utm_term=subway%20com_exact&utm_content=brand&utm_campaign=&cid=0:0:00:0:nat-us:0&0=0&gclid=eda71fd3e2d01efd63ec7b08791cf243&gclsrc=3p.ds&msclkid=eda71fd3e2d01efd63ec7b08791cf243'
+    success_url = 'https://www.subway.com/en-us'
 
 
 def signup(request):
@@ -83,9 +77,9 @@ def signup(request):
             login(request, user)
             return redirect('index')
         else:
-            error_message = 'Invalid sign up - try again'
+            error_message = 'Invalid Form Data'
     form = UserCreationForm()
-    context = {'form': form, 'error_message': error_message}
+    context = {'form': form, 'error': error_message}
     return render(request, 'registration/signup.html', context)
 
 
@@ -98,7 +92,7 @@ def add_comment(request, train_id):
         comment.train = get_object_or_404(Train, id=train_id)
         comment.save()
 
-        return redirect('train_detail', train_id=train_id)
+    return redirect('train_detail', train_id=train_id)
 
 def journey_index(request):
     journeys = Journey.objects.all()
@@ -109,26 +103,20 @@ def journey_index(request):
 def journey_detail(request, journey_id):
     journey = get_object_or_404(Journey, id=journey_id)
     stops = journey.route.stationorder_set.all()
-    return render(request, 'journey/journey_detail.html', {'journey': journey, "stops": stops})
+    booking_form = BookingForm()
+    return render(request, 'journey/journey_detail.html', {'journey': journey, "stops": stops, 'booking_form':booking_form})
 
 @login_required
 def create_booking(request, journey_id):
-    user = request.user
     journey = Journey.objects.get(id=journey_id)
-    fields = {'journey':journey, 'user':user}
-    booking = BookingForm(fields)
-    stops = journey.route.stationorder_set.all()
-    if request.method == "GET":
-        return render(request, 'booking/booking.html', {'booking': booking, 'journey':journey, 'stops':stops})
-    else :
-        booking = BookingForm(request.POST)
-        booking.journey = journey
-        booking.user = request.user
-        if booking.is_valid():
-            booking.save()
-            return redirect('booking/my_bookings.html')
-        return render(request, 'booking/booking.html', {'booking': booking, 'journey':journey, 'stops':stops, 'error':'invalid values'})
+    booking = BookingForm(request.POST)
+    booking.journey = journey
+    booking.user = request.user
+    if booking.is_valid():
+        booking.save()
+        return redirect(reverse('my_bookings'))
+    return render(request, 'journey/journey_detail.html', {'journey': journey, 'booking_form': booking, 'stops':journey.route.stationorder_set.all(), 'error':'Invalid Form Data'})
 
-
-def my_booking(request):
-    pass
+@login_required
+def my_bookings(request):
+    return render(request,'booking/my_bookings.html')
