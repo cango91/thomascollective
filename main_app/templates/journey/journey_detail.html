@@ -9,10 +9,10 @@
         <div class="card-content">
             <ul>
                 <li>
-                    Leaves from <b>{{ stops.first }}</b> @ {{ stops.first.departure_time }}
+                    Leaves from <b>{{ stops.first.station.name }}</b> @ {{ stops.first.departure_time }}
                 </li>
                 <li>
-                    Arrives at <b>{{ stops.last }}</b> @ {{ stops.last.arrival_time }}
+                    Arrives at <b>{{ stops.last.station.name }}</b> @ {{ stops.last.arrival_time }}
                 </li>
             </ul>
         </div>

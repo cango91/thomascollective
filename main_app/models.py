@@ -45,7 +45,7 @@ class Route(models.Model):
     distance = models.DecimalField(default=0,max_digits=8, decimal_places=2)
     
     def __str__(self):
-        return f"{self.stationorder_set.first()} to {self.stationorder_set.last()}"
+        return f"{self.stationorder_set.first().station.name} to {self.stationorder_set.last().station.name}" if self.stationorder_set.count()>=2  else 'No Route Planned'
     
 class StationOrder(models.Model):
     route = models.ForeignKey(Route, on_delete=models.CASCADE)
@@ -58,7 +58,7 @@ class StationOrder(models.Model):
         ordering = ['order']
         
     def __str__(self):
-        return f"{self.station}"
+        return f"{self.route.train.name}: {self.station}"
     
 class Journey(models.Model):
     train = models.ForeignKey(Train, on_delete=models.CASCADE)
@@ -67,7 +67,7 @@ class Journey(models.Model):
     arrival_time = models.DateTimeField()
     
     def __str__(self):
-        return f"{self.train} - {self.route.stationorder_set.first()} to {self.route.stationorder_set.last()}"
+        return f"{self.train} - " + f"{self.route.stationorder_set.first().station.name} to {self.route.stationorder_set.last().station.name}" if self.route.stationorder_set.count()>1 else 'No Route Planned'
     
 class Booking(models.Model):
     journey = models.ForeignKey(Journey, on_delete=models.CASCADE,default=1)
