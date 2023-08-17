@@ -18,9 +18,15 @@
               <div class="card-title center">Destinations:</div>
               <div class="card-content">
                 <form id="dest-search">
-                  <label for="from-enabled"><input type="checkbox" id="from-enabled"><span>From:</span></label>
+                  <label for="from-enabled">
+                    <input type="checkbox" id="from-enabled">
+                    <span>From:</span>
+                  </label>
                   <input type="text" name="from" id="from-field">
-                  <label for="to-enabled"><input type="checkbox" id="to-enabled"><span>To:</span></label>
+                  <label for="to-enabled">
+                    <input type="checkbox" id="to-enabled">
+                    <span>To:</span>
+                  </label>
                   <input type="text" name="to" id="to-field">
                 </form>
               </div>
@@ -31,10 +37,24 @@
               <div class="card-title center">Dates:</div>
               <div class="card-content">
                 <form id="date-search">
-                  <label for="after-date-enabled"><input type="checkbox" id="after-date-enabled"><span>After:</span></label>
-                  <input type="text" name="after-date" id="after-date-field" class="datepicker">
-                  <label for="before-date-enabled"><input type="checkbox" id="before-date-enabled"><span>Before:</span></label>
-                  <input type="text" name="before-date" id="before-date-field" class="datepicker">
+                  <label for="after-date-enabled">
+                    <input type="checkbox" id="after-date-enabled">
+                    <span>After:</span>
+                  </label>
+                  <input type="text"
+                         name="after-date"
+                         id="after-date-field"
+                         class="datepicker">
+                  <label for="before-date-enabled">
+                    <input type="checkbox" id="before-date-enabled">
+                    <span>Before:</span>
+                  </label>
+                  <input type="text"
+                         name="before-date"
+                         id="before-date-field"
+                         class="datepicker">
+                  <input type="hidden" id="before-date-value">
+                  <input type="hidden" id="after-date-value">
                 </form>
               </div>
             </div>
@@ -43,7 +63,9 @@
       </div>
     </li>
   </ul>
-  <div id="table-container"></div>
+  <div class="mb-5">
+    <div id="table-container"></div>
+  </div>
   <!-- Modal Structure -->
   <div id="stops-modal" class="modal bottom-sheet">
     <div class="modal-content">
@@ -201,7 +223,6 @@
       const table = document.getElementById('journeys-table-data-body');
 
       table.addEventListener('click', function(evt){
-        console.log(evt.target)
         if(evt.target.dataset.journeyId) return;
         const url = evt.target.closest('tr').dataset.url;
         if (url) {
@@ -222,13 +243,29 @@
         autoClose: true,
         defaultDate: new Date(),
         minDate: new Date(),
-        onSelect: (e) => document.getElementById('before-date-enabled').checked = true,
+        onSelect: (e) => {
+          const elem = document.getElementById('before-date-value');
+          document.getElementById('before-date-enabled').checked = true;
+          elem.value = formatDateForDjango(e);
+          elem.dispatchEvent(new Event('input', {
+            bubbles: true, // Allow the event to bubble
+            cancelable: true,
+          }));
+      },
       })
       const afterInstance = M.Datepicker.init(datepickers[0],{
         autoClose: true,
         defaultDate: new Date(),
         minDate: new Date(),
-        onSelect: (e) => document.getElementById('after-date-enabled').checked = true,
+        onSelect: (e) => {
+          const elem = document.getElementById('after-date-value');
+          document.getElementById('after-date-enabled').checked = true;
+          elem.value = formatDateForDjango(e);
+          elem.dispatchEvent(new Event('input', {
+            bubbles: true, // Allow the event to bubble
+            cancelable: true,
+          }));
+      },
       });
 
       const fromText = document.getElementById('from-field');
@@ -279,7 +316,10 @@
       const searchArea = document.querySelector('.search-area');
       searchArea.addEventListener('input',(evt)=>{
         if(!handler) return;
-        let params ={};
+        
+        clearTimeout(timerId);
+        timerId = setTimeout(() => {
+          let params ={};
         if(!! document.getElementById('to-enabled').checked){
           params.toStop = toText.value;
         }
@@ -287,19 +327,16 @@
           params.fromStop = fromText.value;
         }
         if(!! document.getElementById('after-date-enabled').checked){
-          params.afterDate = formatDateWithTimezone(new Date(afterInstance.date));
+          params.afterDate = formatDateForDjango(afterInstance.date);
         }
         if(!! document.getElementById('before-date-enabled').checked){
-          params.afterDate = beforeInstance.date.toString();
+          params.beforeDate = formatDateForDjango(beforeInstance.date);
         }
         formattedUrl = buildUrl(params);
-        console.log(formattedUrl)
-
-        clearTimeout(timerId);
-        timerId = setTimeout(() => {
-          
-
-          
+        handler.setOpts({
+          url: formattedUrl,
+        });
+        handler.populateTable();
         }, DEBOUNCE_TIME);
       });
     });

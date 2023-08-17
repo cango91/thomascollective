@@ -42,12 +42,12 @@ const formatDateForDjango = (date, locale = 'en-US') => {
   const formattedDate = new Intl.DateTimeFormat(locale, options).format(date);
 
   // Split date and time
-  const [year, month, day, ...timeParts] = formattedDate.match(/\d+/g);
+  const [month, day, year, ...timeParts] = formattedDate.match(/\d+/g);
   const time = timeParts.join(':');
 
   // Get timezone offset in the format +/-HH:MM
   const offset = (date.getTimezoneOffset() / 60).toFixed(2);
   const timeZoneOffset = `${offset < 0 ? '+' : '-'}${Math.abs(offset).toString().padStart(2, '0')}:00`;
 
-  return `${year}-${month}-${day} ${time}${timeZoneOffset}`;
+  return `${year}-${month}-${day}T${time}${timeZoneOffset}`;
 }
