@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.shortcuts import get_list_or_404, render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
@@ -36,7 +37,7 @@ def train_index(request):
 
 def train_detail(request, train_id):
     train = Train.objects.get(id=train_id)
-    comments = train.comment_set.all()
+    comments = train.comments.all()
     form = CommentForm()
 
     return render(request, 'train/train_detail.html', {'train': train, 'comments': comments, 'form': form})
@@ -108,7 +109,7 @@ def journey_index(request):
 
 def journey_detail(request, journey_id):
     journey = get_object_or_404(Journey, id=journey_id)
-    stops = journey.route.stationorder_set.all()
+    stops = journey.route.station_orders.all()
     booking_form = BookingForm()
     return render(request, 'journey/journey_detail.html', {'journey': journey, "stops": stops, 'booking_form': booking_form})
 
@@ -118,12 +119,13 @@ def create_booking(request, journey_id):
     journey = Journey.objects.get(id=journey_id)
     booking_form = BookingForm(request.POST)
     booking_form.instance.journey = journey
-    print(request.user.id)
+    booking_form.instance.price = booking_form.instance.number_of_passengers * 10.
     booking_form.instance.user = request.user
+    print(booking_form.instance)
     if booking_form.is_valid():
         booking_form.save()
         return redirect(reverse('my_bookings'))
-    return render(request, 'journey/journey_detail.html', {'journey': journey, 'booking_form': booking_form, 'stops': journey.route.stationorder_set.all(), 'error': 'Invalid Form Data'})
+    return render(request, 'journey/journey_detail.html', {'journey': journey, 'booking_form': booking_form, 'stops': journey.route.station_orders.all(), 'error': 'Invalid Form Data'})
 
 
 @login_required
@@ -206,7 +208,7 @@ def getAllStopsForJourney(request, journey_id):
     except Exception as e:
         print(e)
         return JsonResponse({'status':404, 'error':'Journey/Route not found'})
-    stops = route.stationorder_set.all().values_list('station__name','arrival_time','departure_time')
+    stops = route.station_orders.all().values_list('station__name','arrival_time','departure_time')
     stops_list = [{'station': stop[0], 'arrival': stop[1],'departure': stop[2]} for stop in stops]
     return JsonResponse({'status': 200, 'data': {'stops': stops_list, 'route':str(route)},})
 
