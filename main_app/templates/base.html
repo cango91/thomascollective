@@ -42,16 +42,15 @@
             <li>
             <a href="{% url 'about' %}">About</a>
             </li>
-
+            <li>
+              <a href="{% url 'index' %}">All Trains</a>                
+            </li>
+            <li>
+              <a href="{% url 'journey_index' %}">Journeys</a>
+            </li>
             {% if user.is_authenticated %}
               <li>
-                <a href="{% url 'index' %}">All Trains</a>                
-              </li>
-              <li>
                 <a href="{% url 'train_create' %}">Add a Train</a>
-              </li>
-              <li>
-                <a href="{% url 'journey_index' %}">Journeys</a>
               </li>
               <li>
                 <a href="{% url 'logout' %}">Logout</a>
@@ -72,10 +71,16 @@
       <li>
         <a href="{% url 'home' %}">Home</a>
       </li>
-      {% if user.is_authenticated %}
-        <li>
-          <a href="{% url 'index' %}">All Trains</a>
+      <li>
+        <a href="{% url 'about' %}">About</a>
         </li>
+      <li>
+        <a href="{% url 'index' %}">All Trains</a>
+      </li>
+      <li>
+        <a href="{% url 'journey_index' %}">Journeys</a>
+      </li>
+      {% if user.is_authenticated %}
         <li>
           <a href="{% url 'train_create' %}">Add a Train</a>
         </li>
@@ -91,7 +96,7 @@
         </li>
       {% endif %}
     </ul>
-    <main class="container">
+    <main class="container mb-4">
       {% block content %}
       {% endblock content %}
     </main>

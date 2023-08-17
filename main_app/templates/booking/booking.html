@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>GET YOUR TRIP READY</h1>
+
+<ul>
+    <li>
+       <ul>
+         {% for stop in stops %}
+         <li>Station: {{stop.station}}</li>
+         <li>Arrival Time: {{stop.arrival_time}}</li>
+         <li>Departure Time: {{stop.departure_time}}</li>
+         {% endfor %}
+       </ul>
+       
+    </li>
+</ul>
+<form method="POST">
+    {% csrf_token %}
+    {{booking.as_table}}
+  <input type="submit" value="Create Booking" class="'btn mb mt-1">  
+</form>
+{% endblock content %}

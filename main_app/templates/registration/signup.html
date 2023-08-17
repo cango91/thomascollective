@@ -3,15 +3,18 @@
 
 <div class="container">
 <h1>Sign Up</h1>
-<p class="red-text">{{ error_message }}</p>
-<form method="POST" action="">
+<form method="post" action="">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="btn">Sign Up</button>
-
 </form>
-
-
 </div>
-
+{% if error %}
+<script>
+    window.addEventListener('DOMContentLoaded',()=>{
+        const toast = `<p class="red-text">An error has occured:<span style="color:white;"> {{ error }}. <br>Please try again</span></p>`
+        M.toast({html: toast});
+    });
+</script>
+{% endif %}
 {% endblock content %}

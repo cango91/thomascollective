@@ -1,17 +1,20 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import get_list_or_404, render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
+from django.core.paginator import Paginator
 from django.utils.timezone import now
 from .models import Train, Route, Booking, Comment, Journey
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
-from .forms import CommentForm
+from .forms import CommentForm, BookingForm
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
+from django.http import JsonResponse
 
 
 def home(request):
     return render(request, 'home.html')
+
 
 def about(request):
     return render(request, 'about.html')
@@ -36,12 +39,6 @@ def train_detail(request, train_id):
     form = CommentForm()
 
     return render(request, 'train/train_detail.html', {'train': train, 'comments': comments, 'form': form})
-
-
-class CommentUpdate(UpdateView):
-    model = Comment
-    fields = ['content', 'rating']
-    template_name = 'comment/edit_comment.html'
 
 
 def update_comment(request, pk):
@@ -71,7 +68,7 @@ def update_comment(request, pk):
 class CommentDelete(DeleteView):
     model = Comment
     template_name = 'comment/confirm_comment_delete.html'
-    success_url = 'https://www.subway.com/en-us?utm_source=bing&utm_medium=cpc&utm_term=subway%20com_exact&utm_content=brand&utm_campaign=&cid=0:0:00:0:nat-us:0&0=0&gclid=eda71fd3e2d01efd63ec7b08791cf243&gclsrc=3p.ds&msclkid=eda71fd3e2d01efd63ec7b08791cf243'
+    success_url = 'https://www.subway.com/en-us'
 
 
 def signup(request):
@@ -83,9 +80,9 @@ def signup(request):
             login(request, user)
             return redirect('index')
         else:
-            error_message = 'Invalid sign up - try again'
+            error_message = 'Invalid Form Data'
     form = UserCreationForm()
-    context = {'form': form, 'error_message': error_message}
+    context = {'form': form, 'error': error_message}
     return render(request, 'registration/signup.html', context)
 
 
@@ -98,7 +95,8 @@ def add_comment(request, train_id):
         comment.train = get_object_or_404(Train, id=train_id)
         comment.save()
 
-        return redirect('train_detail', train_id=train_id)
+    return redirect('train_detail', train_id=train_id)
+
 
 def journey_index(request):
     journeys = Journey.objects.all()
@@ -106,8 +104,61 @@ def journey_index(request):
         'journeys': journeys
     })
 
+
 def journey_detail(request, journey_id):
     journey = get_object_or_404(Journey, id=journey_id)
     stops = journey.route.stationorder_set.all()
+    booking_form = BookingForm()
+    return render(request, 'journey/journey_detail.html', {'journey': journey, "stops": stops, 'booking_form': booking_form})
 
-    return render(request, 'journey/journey_detail.html', {'journey': journey, "stops": stops})
+
+@login_required
+def create_booking(request, journey_id):
+    journey = Journey.objects.get(id=journey_id)
+    booking = BookingForm(request.POST)
+    booking.journey = journey
+    booking.user = request.user
+    if booking.is_valid():
+        booking.save()
+        return redirect(reverse('my_bookings'))
+    return render(request, 'journey/journey_detail.html', {'journey': journey, 'booking_form': booking, 'stops': journey.route.stationorder_set.all(), 'error': 'Invalid Form Data'})
+
+
+@login_required
+def my_bookings(request):
+    return render(request, 'booking/my_bookings.html')
+
+### AJAX ENDPOINTS ###
+
+
+def getAllStopsForJourney(request, journey_id):
+    try:
+        route = Journey.objects.get(id=journey_id).route
+    except:
+        return JsonResponse({'status':404, 'error':'Journey/Route not found'})
+    stops = route.stationorder_set.all().values_list('station__name','arrival_time','departure_time')
+    stops_list = [{'station': stop[0], 'arrival': stop[1],'departure': stop[2]} for stop in stops]
+    return JsonResponse({'status': 200, 'data': {'stops': stops_list, 'route':str(route)},})
+
+
+def getAllJourneys(request):
+    # get query parameters
+    sortBy = request.GET.get('sortBy','departure_time')
+    order = request.GET.get('order', 'ascending')
+    orderStr = f"{'-' if order =='descending'  else ''}{sortBy}"
+    
+    try:
+        journeys = Journey.objects.all().order_by(orderStr)
+    except:
+        return JsonResponse({'status':404, 'error':'No Journeys in DB'})
+
+    # paginate
+    page = request.GET.get('page',1)
+    perPage = request.GET.get('limit', 10)
+    
+    paginator = Paginator(journeys,perPage)
+    data = paginator.page(page)    
+    
+    journeys_list = [{'train': str(journey.train.name), 'route': str(journey.route),
+                      'departure': str(journey.departure_time), 'arrival': str(journey.arrival_time), 'id':journey.id} for journey in data]
+    return JsonResponse({'status': 200, 'data': journeys_list, 'page':page, 'pageCount':paginator.num_pages, 'limit':perPage })

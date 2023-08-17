@@ -1,41 +1,200 @@
 {% extends "base.html" %}
+{% load static %}
+{% block header %}
+<script src="{% static 'js/dynamic-table.js' %}" defer></script>
+<script src="{% static 'js/utils.js' %}"></script>
+{% endblock header %}
 {% block content %}
   <h1>All Journeys</h1>
-  <table class="highlight" id="click">
+  <div id="table-container"></div>
+  {% comment %} <table class="highlight" id="click">
     <thead>
       <tr>
         <th>Train Name</th>
         <th>Route</th>
         <th>Departure Time</th>
         <th>Arrival Time</th>
-        <th></th>
       </tr>
     </thead>
     <tbody>
       {% for journey in journeys %}
-        
         <tr data-url="{% url 'journey_detail' journey.id %}" class="clickable">
-         <div class="collapsible-header">
           <td>{{ journey.train.name }}</td>
           <td>{{ journey.route }}</td>
           <td>{{ journey.departure_time }}</td>
           <td>{{ journey.arrival_time }}</td>
-         
-         <td></td>
-         </div>
         </tr>
       {% endfor %}
     </tbody>
-  </table>
-
+  </table> {% endcomment %}
+<!-- Modal Structure -->
+<div id="stops-modal" class="modal bottom-sheet">
+  <div class="modal-content">
+    <h4 class="header" id="modal-header"></h4>
+    <div id="modal-body">
+      <table>
+        <thead>
+          <tr>
+            <th>Station</th>
+            <th>Arrival</th>
+            <th>Departure</th>
+          </tr>
+        </thead>
+        <tbody id="modal-table-body">
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+  </div>
+</div>
   <script>
-    const table = document.getElementById('click');
 
-    table.addEventListener('click', function(evt){
-      const url = evt.target.closest('tr').dataset.url;
-      if (url) {
-        window.location.href = url;
+    const showError = (error) =>{
+      const toast = `<p class="red-text">An error has occured:<span style="color:white;">${error}. <br>Please try again</span></p>`
+      M.toast({html: toast});
+    }
+
+    const showStopsModal = ({route,stops}) =>{
+      document.getElementById('modal-header').textContent = `${route} - All Stops`;
+      const tbody = document.getElementById('modal-table-body');
+      while(tbody.firstChild){
+        tbody.firstChild.remove();
       }
-    });
+      stops.forEach(stop => {
+        const tr = document.createElement('tr');
+        let stationTd = document.createElement('td');
+        let arrivalTd = document.createElement('td');
+        let departTd = document.createElement('td');
+        stationTd.innerText = stop.station;
+        arrivalTd.innerText = getDatetime(stop.arrival);
+        departTd.innerText = getDatetime(stop.departure);
+        tr.append(stationTd,arrivalTd,departTd)
+        
+        tbody.appendChild(tr);
+      });
+      M.Modal.getInstance(document.getElementById('stops-modal')).open();
+    }
+
+    const stopsParseFunction = (data,td,tr) =>{
+      const a = document.createElement('a');
+      a.className = 'btn btn-small';
+      a.dataset.journeyId = data.journeyId;
+      a.href="#!"
+      a.textContent = "See all stops"
+      a.addEventListener('click', async evt=>{
+        // fetch all stops for route of journey
+        try{
+          const response = await fetch(`/ajax/journeys/${evt.target.dataset.journeyId}/stops`);
+          if(!response.ok) throw new Error(await response.text());
+          try{
+            const jsonData = await response.json();
+            // display modal
+            showStopsModal({route: jsonData.data.route, stops: jsonData.data.stops})   
+          }catch(e){
+            showError(`Couldn't parse JSON<br>${e}`);
+          }
+        }catch(e){
+          showError(`Couldn't fetch data<br>${e}`);
+        }
+      });
+      td.appendChild(a);
+      tr.classList.add('clickable');
+      tr.dataset.url = `/journeys/${data.journeyId}`
+      tr.appendChild(td);
+    }
+
+    const tableHeaders = [
+    {
+      text: "Train Name",
+      sort: {
+        sortBy:"train__name"
+      },
+    },
+    {
+      text: 'Route',
+      sort: {
+        sortBy: 'route'
+      }
+    },
+    {
+      text: 'Departure',
+      sort:{
+        sortBy: 'departure_time'
+      }
+    },
+    {
+      text: 'Arrival',
+      sort: {
+        sortBy: 'arrival_time'
+      }
+    },
+    {
+      text: 'Stops',
+      parseFunction: stopsParseFunction
+    }
+    ];
+
+    const fetchFunction = async (tableOptions, formattedUrl) => {
+      try{
+          const response = await fetch(formattedUrl); 
+          if(response.ok){
+              const responseJson = await response.json();
+              const rows = [];
+              const data = responseJson.data;
+              data.forEach(journey => {
+                  rows.push([journey.train, journey.route, getDatetime(journey.departure), getDatetime(journey.arrival), {journeyId: journey.id}]);
+              });
+              tableOptions.limit = responseJson.perPage ? responseJson.perPage : tableOptions.limit;
+              tableOptions.pageCount = responseJson.pageCount ? responseJson.pageCount : tableOptions.pageCount;
+              tableOptions.page = responseJson.page ? responseJson.page : tableOptions.page;
+              return rows;
+          }else{
+              throw new Error('Bad Response recieved from server');
+          }
+      }catch(e){
+          showError(e);
+      }
+  }
+
+    const tableOptions = {
+      url: "{% url 'all_journeys' %}",
+      limit: 5,
+      page: 1,
+      pageCount: 0,
+      sort: {
+        sortBy: 'departure_time',
+        asc:true,
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", ()=>{
+      const handler = tableHandler(
+        document.getElementById('table-container'),
+        'journeys-table',
+        null,
+        tableOptions,
+        fetchFunction,
+        tableHeaders,
+        ['highlight']
+      );
+
+      const modal = document.getElementById('stops-modal');
+      const instance = M.Modal.init(modal);
+      const table = document.getElementById('journeys-table-data-body');
+
+      table.addEventListener('click', function(evt){
+        console.log(evt.target)
+        if(evt.target.dataset.journeyId) return;
+        const url = evt.target.closest('tr').dataset.url;
+        if (url) {
+          window.location.href = url;
+        }
+      });
+    })
+    
+
+    
   </script>
 {% endblock content %}
