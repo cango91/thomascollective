@@ -117,7 +117,7 @@ const tableHandler = (
     pageInfo.classList.add('text-center', 'mt-2');
 
     const paginationContainer = document.createElement('div');
-    paginationContainer.classList.add('center-align','d-flex', 'justify-content-around', 'd-none');
+    paginationContainer.classList.add('d-none', 'justify-content-around');
     paginationContainer.append(prevButton, pageInfo, nextButton);
 
     table.parentNode.insertBefore(paginationContainer, table.nextSibling);
@@ -125,6 +125,7 @@ const tableHandler = (
     // Update the visibility of the pagination controls and page info text based on the page count
     const updatePaginationVisibility = () => {
         paginationContainer.classList.remove('d-none');
+        paginationContainer.classList.add('d-flex');
         prevButton.style.visibility = (fetchOptions.page > 1) ? 'visible' : 'hidden';
         nextButton.style.visibility = (fetchOptions.page < fetchOptions.pageCount) ? 'visible' : 'hidden';
         pageInfo.textContent = `Page ${table.dataset.page} of ${table.dataset.pageCount}`;  // update page info text
