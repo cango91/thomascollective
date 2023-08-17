@@ -10,9 +10,12 @@
             <li>departure: {{booking.journey.departure_time}}</li>
             <li>arrival: {{booking.journey.arrival_time}}</li>
             <li>seat number: {{booking.seat_number}}</li>
+            <li>luggage weight: {{booking.luggage_weight}}</li>
+            <li>number of passengers: {{booking.number_of_passengers}}</li>
         </ul>
         <div class="card">
             <a href="{% url 'update_my_bookings' booking.id %}">Update Booking</a>
+            <a href="{% url 'delete_booking' booking.id %}">Delete Booking</a>
     </li>
 </ul>
 {% endfor %}
