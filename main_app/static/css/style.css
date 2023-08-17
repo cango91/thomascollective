@@ -174,3 +174,7 @@ span.star-rating * {
 .justify-content-around{
     justify-content: space-around;
 }
+
+.about *{
+    font-size: x-large;
+}
