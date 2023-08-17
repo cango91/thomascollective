@@ -121,10 +121,10 @@ def create_booking(request, journey_id):
     if request.method == "GET":
         return render(request, 'booking/booking.html', {'booking': booking, 'journey':journey, 'stops':stops})
     else :
-        form = BookingForm(request.POST)
-        booking = form.save(commit=False)
+        booking = BookingForm(request.POST)
         booking.journey = journey
-        if form.is_valid():
+        booking.user = request.user
+        if booking.is_valid():
             booking.save()
             return redirect('booking/my_bookings.html')
         return render(request, 'booking/booking.html', {'booking': booking, 'journey':journey, 'stops':stops, 'error':'invalid values'})

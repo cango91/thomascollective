@@ -12,16 +12,12 @@
          <li>Departure Time: {{stop.departure_time}}</li>
          {% endfor %}
        </ul>
-       <ul>
-         <li>Journey Info: {{booking.journey}}</li>
-         <li>Name of Passenger: {{user.username}}</li>
-         <li>Number of Passengers: {{booking.number_of_passengers}}</li>
-         <li>Luggage Weight: {{booking.luggage_weight}}</li>
-        </ul>
+       
     </li>
 </ul>
 <form method="POST">
     {% csrf_token %}
+    {{booking.as_table}}
   <input type="submit" value="Create Booking" class="'btn mb mt-1">  
 </form>
 {% endblock content %}

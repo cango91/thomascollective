@@ -18,4 +18,4 @@ class CommentForm(forms.ModelForm):
 class BookingForm(forms.ModelForm):
     class Meta:
         model = Booking
-        fields = '__all__'
+        fields = ['seat_number', 'number_of_passengers', 'luggage_weight']
