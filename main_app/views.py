@@ -130,3 +130,5 @@ def create_booking(request, journey_id):
         return render(request, 'booking/booking.html', {'booking': booking, 'journey':journey, 'stops':stops, 'error':'invalid values'})
 
 
+def my_booking(request):
+    pass
