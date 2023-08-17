@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>ARE YOU SURE YOU WISH TO DO THIS?</h1>
+<h3>This action cannot be refuted</h3>
+
+<form action="" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Yes - Delete!" class="btn waves-effect waves-light red">
+    <a class="btn waves-effect waves-light" href="{% url 'my_bookings' %}">Cancel</a>
+  </form>
+
+{% endblock content %}
