@@ -135,14 +135,22 @@ def my_bookings(request):
 
 def update_my_bookings(request, booking_id):
     booking = Booking.objects.get(id=booking_id)
+    
     if request.method == 'POST':
         form = BookingForm(request.POST, instance=booking)
         if form.is_valid():
+            # Calculate the price based on the number of passengers
+            number_of_passengers = form.cleaned_data['number_of_passengers']
+            price_per_passenger = Decimal('10.00')  # Set your own price per passenger
+            booking.price = number_of_passengers * price_per_passenger
+            
             form.save()
+
             return redirect('my_bookings')
     else:
         form = BookingForm(instance=booking)
     return render(request, 'booking/update_my_bookings.html',{'form':form, 'booking_id':booking_id})
+
 
 class BookingDelete(DeleteView):
     model = Booking

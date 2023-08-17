@@ -16,6 +16,8 @@ class CommentForm(forms.ModelForm):
 
 
 class BookingForm(forms.ModelForm):
+    price = forms.DecimalField(disabled=True)  # Add a price field
+    
     class Meta:
         model = Booking
-        fields = ['seat_number', 'number_of_passengers', 'luggage_weight']
+        fields = ['seat_number', 'number_of_passengers', 'luggage_weight', 'price'] 
