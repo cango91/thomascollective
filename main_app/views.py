@@ -10,7 +10,7 @@ from .forms import CommentForm, BookingForm
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse, reverse_lazy
 from django.http import JsonResponse
-from django.db.models import OuterRef
+from django.db.models import OuterRef, Subquery
 
 
 def home(request):
@@ -155,20 +155,28 @@ class BookingDelete(DeleteView):
 
 ### HELPER SEARCH FUNCTION ###
 
-def searchRoutes(toStop = None, fromStop = None, before = None, after = None):
+def searchRoutes(toStop=None, fromStop=None, before=None, after=None):
     station_order_query = StationOrder.objects.all()
-    if toStop or fromStop and not (toStop and fromStop):
+
+    # Handle multiple stops in single stop case using likeness matching
+    if (toStop or fromStop) and not (toStop and fromStop):
         stop = toStop or fromStop
-        station_order_query = station_order_query.filter(station__name=stop)
+        station_order_query = station_order_query.filter(station__name__icontains=stop)
+
+    # Handle multiple stops in to-from case using likeness matching
     if toStop and fromStop:
-        station_before = Station.objects.get(name=toStop)
-        station_after = Station.objects.get(name=fromStop)
-        # Find routes where the order of station_before is less than the order of station_after
-        station_order_query = station_order_query.filter(
-            station=station_before,
-            order__lt=StationOrder.objects.filter(station=station_after, route=OuterRef('route')).values('order')
+                # Finding the station orders for 'fromStop' and 'toStop'
+        station_orders_before = StationOrder.objects.filter(station__name__icontains=fromStop)
+        station_orders_after = StationOrder.objects.filter(station__name__icontains=toStop)
+
+        # Filtering based on the route and order to ensure 'toStop' comes after 'fromStop'
+        station_order_query = StationOrder.objects.filter(
+            route__in=station_orders_before.values('route'),
+            order__gt=Subquery(station_orders_before.filter(route=OuterRef('route')).values('order')),
+            id__in=station_orders_after
         )
-        
+        print(station_order_query)
+
     routes = Route.objects.filter(stationorder__in=station_order_query).distinct()
 
     # If filtering by dates, start with Journey model
@@ -181,14 +189,14 @@ def searchRoutes(toStop = None, fromStop = None, before = None, after = None):
         journeys_query = journeys_query.filter(departure_time__gt=after)
 
     return journeys_query
-
 ### AJAX ENDPOINTS ###
 
 
 def getAllStopsForJourney(request, journey_id):
     try:
         route = Journey.objects.get(id=journey_id).route
-    except:
+    except Exception as e:
+        print(e)
         return JsonResponse({'status':404, 'error':'Journey/Route not found'})
     stops = route.stationorder_set.all().values_list('station__name','arrival_time','departure_time')
     stops_list = [{'station': stop[0], 'arrival': stop[1],'departure': stop[2]} for stop in stops]
@@ -200,13 +208,14 @@ def getAllJourneys(request):
     sortBy = request.GET.get('sortBy','departure_time')
     order = request.GET.get('order', 'ascending')
     orderStr = f"{'-' if order =='descending'  else ''}{sortBy}"
-    toDestination = request.GET.get('toStop','')
-    fromDestination = request.GET.get('fromStop','')
-    beforeDate = request.GET.get('before','')
-    afterDate = request.GET.get('after','')
+    toDestination = request.GET.get('toStop',None)
+    fromDestination = request.GET.get('fromStop',None)
+    beforeDate = request.GET.get('before',None)
+    afterDate = request.GET.get('after',None)
     try:
         journeys = searchRoutes(toDestination,fromDestination,beforeDate,afterDate).order_by(orderStr)
-    except:
+    except Exception as e:
+        print(e)
         return JsonResponse({'status':404, 'error':'No Journeys in DB'})
     # try:
     #     journeys = Journey.objects.all().order_by(orderStr)
