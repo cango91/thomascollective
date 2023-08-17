@@ -218,11 +218,50 @@
       });
 
       const datepickers = document.querySelectorAll('.datepicker');
-      const dateInstances = M.Datepicker.init(datepickers,{
+      const beforeInstance = M.Datepicker.init(datepickers[1], {
         autoClose: true,
         defaultDate: new Date(),
         minDate: new Date(),
+        onSelect: (e) => document.getElementById('before-date-enabled').checked = true
+      })
+      const afterInstance = M.Datepicker.init(datepickers[0],{
+        autoClose: true,
+        defaultDate: new Date(),
+        minDate: new Date(),
+        onSelect: (e) => document.getElementById('after-date-enabled').checked = true
       });
+
+      const fromText = document.getElementById('from-field');
+      const toText = document.getElementById('to-field');
+
+      fromText.addEventListener('input', (evt)=>{
+        if(!handler) return;
+        const fromchk = document.getElementById('from-enabled')
+        if(evt.target.value){
+          fromchk.checked = true;
+        }else{
+          fromchk.checked = false;
+        }
+      });
+
+      toText.addEventListener('input', (evt)=>{
+        if(!handler) return;
+        const to = document.getElementById('to-enabled')
+        if(evt.target.value){
+          to.checked = true;
+        }else{
+          to.checked = false;
+        }
+      });
+
+      const DEBOUNCE_TIME = 500;
+      let timerId;
+
+      const searchArea = document.querySelector('.search-area');
+      searchArea.addEventListener('input',(evt)=>{
+        if(!handler) return;
+        
+      })
 
       
 
