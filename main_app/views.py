@@ -118,12 +118,12 @@ def journey_detail(request, journey_id):
 def create_booking(request, journey_id):
     journey = Journey.objects.get(id=journey_id)
     booking_form = BookingForm(request.POST)
-    booking_form.instance.journey = journey
-    booking_form.instance.price = booking_form.instance.number_of_passengers * Decimal(10)
-    booking_form.instance.user = request.user
-    print(booking_form.instance.price)
     if booking_form.is_valid():
-        booking_form.save()
+        booking = booking_form.save(commit=False)
+        booking.journey = journey
+        booking.price = Decimal(booking_form.instance.number_of_passengers * 10.)
+        booking.user = request.user
+        booking.save()
         return redirect(reverse('my_bookings'))
     return render(request, 'journey/journey_detail.html', {'journey': journey, 'booking_form': booking_form, 'stops': journey.route.station_orders.all(), 'error': 'Invalid Form Data'})
 
