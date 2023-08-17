@@ -1,56 +1,72 @@
 {% extends "base.html" %}
 {% load static %}
 {% block header %}
-<script src="{% static 'js/dynamic-table.js' %}" defer></script>
-<script src="{% static 'js/utils.js' %}"></script>
+  <script src="{% static 'js/dynamic-table.js' %}" defer></script>
+  <script src="{% static 'js/utils.js' %}"></script>
 {% endblock header %}
 {% block content %}
   <h1>All Journeys</h1>
+  <ul class="collapsible">
+    <li>
+      <div class="collapsible-header">
+        <i class="material-icons">search</i>Search Journeys <i class="right caret collapsed"></i>
+      </div>
+      <div class="collapsible-body search-area">
+        <div class="row">
+          <div class="col s6">
+            <div class="card">
+              <div class="card-title center">Destinations:</div>
+              <div class="card-content">
+                <form id="dest-search">
+                  <label for="from-enabled"><input type="checkbox" id="from-enabled"><span>From:</span></label>
+                  <input type="text" name="from" id="from-field">
+                  <label for="to-enabled"><input type="checkbox" id="to-enabled"><span>To:</span></label>
+                  <input type="text" name="to" id="to-field">
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="col s6">
+            <div class="card">
+              <div class="card-title center">Dates:</div>
+              <div class="card-content">
+                <form id="date-search">
+                  <label for="after-date-enabled"><input type="checkbox" id="after-date-enabled"><span>After:</span></label>
+                  <input type="text" name="after-date" id="after-date-field" class="datepicker">
+                  <label for="before-date-enabled"><input type="checkbox" id="before-date-enabled"><span>Before:</span></label>
+                  <input type="text" name="before-date" id="before-date-field" class="datepicker">
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
   <div id="table-container"></div>
-  {% comment %} <table class="highlight" id="click">
-    <thead>
-      <tr>
-        <th>Train Name</th>
-        <th>Route</th>
-        <th>Departure Time</th>
-        <th>Arrival Time</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for journey in journeys %}
-        <tr data-url="{% url 'journey_detail' journey.id %}" class="clickable">
-          <td>{{ journey.train.name }}</td>
-          <td>{{ journey.route }}</td>
-          <td>{{ journey.departure_time }}</td>
-          <td>{{ journey.arrival_time }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table> {% endcomment %}
-<!-- Modal Structure -->
-<div id="stops-modal" class="modal bottom-sheet">
-  <div class="modal-content">
-    <h4 class="header" id="modal-header"></h4>
-    <div id="modal-body">
-      <table>
-        <thead>
-          <tr>
-            <th>Station</th>
-            <th>Arrival</th>
-            <th>Departure</th>
-          </tr>
-        </thead>
-        <tbody id="modal-table-body">
-        </tbody>
-      </table>
+  <!-- Modal Structure -->
+  <div id="stops-modal" class="modal bottom-sheet">
+    <div class="modal-content">
+      <h4 class="header" id="modal-header"></h4>
+      <div id="modal-body">
+        <table>
+          <thead>
+            <tr>
+              <th>Station</th>
+              <th>Arrival</th>
+              <th>Departure</th>
+            </tr>
+          </thead>
+          <tbody id="modal-table-body">
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
     </div>
   </div>
-  <div class="modal-footer">
-    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
-  </div>
-</div>
   <script>
-
     const showError = (error) =>{
       const toast = `<p class="red-text">An error has occured:<span style="color:white;">${error}. <br>Please try again</span></p>`
       M.toast({html: toast});
@@ -192,7 +208,25 @@
           window.location.href = url;
         }
       });
-    })
+
+      const caret = document.querySelector('.caret')
+      const elem = document.querySelector('.collapsible');
+      const collapseInstance = M.Collapsible.init(elem, {
+          accordion: true,
+          onOpenStart: () => caret.classList.remove('collapsed'),
+          onCloseStart: () => caret.classList.add('collapsed'),
+      });
+
+      const datepickers = document.querySelectorAll('.datepicker');
+      const dateInstances = M.Datepicker.init(datepickers,{
+        autoClose: true,
+        defaultDate: new Date(),
+        minDate: new Date(),
+      });
+
+      
+
+    });
     
 
     
