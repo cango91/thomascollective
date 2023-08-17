@@ -222,13 +222,13 @@
         autoClose: true,
         defaultDate: new Date(),
         minDate: new Date(),
-        onSelect: (e) => document.getElementById('before-date-enabled').checked = true
+        onSelect: (e) => document.getElementById('before-date-enabled').checked = true,
       })
       const afterInstance = M.Datepicker.init(datepickers[0],{
         autoClose: true,
         defaultDate: new Date(),
         minDate: new Date(),
-        onSelect: (e) => document.getElementById('after-date-enabled').checked = true
+        onSelect: (e) => document.getElementById('after-date-enabled').checked = true,
       });
 
       const fromText = document.getElementById('from-field');
@@ -254,17 +254,54 @@
         }
       });
 
+
       const DEBOUNCE_TIME = 500;
       let timerId;
+      const baseUrl = "{% url 'all_journeys' %}"
+
+      const buildUrl = (params) =>{
+        let url = baseUrl + '?' ;
+        if(params.toStop){
+          url += 'toStop=' + params.toStop + '&'
+        }
+        if(params.fromStop){
+          url += 'fromStop=' + params.fromStop + '&'
+        }
+        if(params.beforeDate){
+          url += 'before=' + params.beforeDate + '&'
+        }
+        if(params.afterDate){
+          url += 'after=' + params.afterDate
+        }
+        return url;
+      }
 
       const searchArea = document.querySelector('.search-area');
       searchArea.addEventListener('input',(evt)=>{
         if(!handler) return;
-        
-      })
+        let params ={};
+        if(!! document.getElementById('to-enabled').checked){
+          params.toStop = toText.value;
+        }
+        if(!! document.getElementById('from-enabled').checked){
+          params.fromStop = fromText.value;
+        }
+        if(!! document.getElementById('after-date-enabled').checked){
+          params.afterDate = formatDateWithTimezone(new Date(afterInstance.date));
+        }
+        if(!! document.getElementById('before-date-enabled').checked){
+          params.afterDate = beforeInstance.date.toString();
+        }
+        formattedUrl = buildUrl(params);
+        console.log(formattedUrl)
 
-      
+        clearTimeout(timerId);
+        timerId = setTimeout(() => {
+          
 
+          
+        }, DEBOUNCE_TIME);
+      });
     });
     
 
