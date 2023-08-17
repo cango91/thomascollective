@@ -8,7 +8,7 @@ from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from .forms import CommentForm, BookingForm
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.http import JsonResponse
 from django.db.models import OuterRef
 
@@ -139,10 +139,15 @@ def update_my_bookings(request, booking_id):
         form = BookingForm(request.POST, instance=booking)
         if form.is_valid():
             form.save()
-            return ('my_bookings')
+            return redirect('my_bookings')
     else:
         form = BookingForm(instance=booking)
-    return redirect('booking/update_my_bookings.html',{'form':form, 'booking_id':booking_id})
+    return render(request, 'booking/update_my_bookings.html',{'form':form, 'booking_id':booking_id})
+
+class BookingDelete(DeleteView):
+    model = Booking
+    template_name = 'booking/confirm_my_booking_delete.html'
+    success_url = reverse_lazy('my_bookings')
 
 
 
