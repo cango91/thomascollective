@@ -154,3 +154,7 @@ span.star-rating * {
 .header{
     color: #ee6e73;
 }
+
+.d-none{
+    display: none;
+}
