@@ -2,7 +2,7 @@ from django.shortcuts import get_list_or_404, render, redirect, get_object_or_40
 from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
 from django.utils.timezone import now
-from .models import Train, Route, Booking, Comment, Journey
+from .models import Station, StationOrder, Train, Route, Booking, Comment, Journey
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
@@ -10,6 +10,7 @@ from .forms import CommentForm, BookingForm
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.http import JsonResponse
+from django.db.models import OuterRef
 
 
 def home(request):
@@ -144,6 +145,38 @@ def update_my_bookings(request, booking_id):
     return redirect('booking/update_my_bookings.html',{'form':form, 'booking_id':booking_id})
 
 
+
+
+
+### HELPER SEARCH FUNCTION ###
+
+def searchRoutes(toStop = None, fromStop = None, before = None, after = None):
+    station_order_query = StationOrder.objects.all()
+    if toStop or fromStop and not (toStop and fromStop):
+        stop = toStop or fromStop
+        station_order_query = station_order_query.filter(station__name=stop)
+    if toStop and fromStop:
+        station_before = Station.objects.get(name=toStop)
+        station_after = Station.objects.get(name=fromStop)
+        # Find routes where the order of station_before is less than the order of station_after
+        station_order_query = station_order_query.filter(
+            station=station_before,
+            order__lt=StationOrder.objects.filter(station=station_after, route=OuterRef('route')).values('order')
+        )
+        
+    routes = Route.objects.filter(stationorder__in=station_order_query).distinct()
+
+    # If filtering by dates, start with Journey model
+    journeys_query = Journey.objects.filter(route__in=routes)
+
+    # Apply date filters if provided
+    if before:
+        journeys_query = journeys_query.filter(departure_time__lt=before)
+    if after:
+        journeys_query = journeys_query.filter(departure_time__gt=after)
+
+    return journeys_query
+
 ### AJAX ENDPOINTS ###
 
 
@@ -162,11 +195,18 @@ def getAllJourneys(request):
     sortBy = request.GET.get('sortBy','departure_time')
     order = request.GET.get('order', 'ascending')
     orderStr = f"{'-' if order =='descending'  else ''}{sortBy}"
-    
+    toDestination = request.GET.get('toStop','')
+    fromDestination = request.GET.get('fromStop','')
+    beforeDate = request.GET.get('before','')
+    afterDate = request.GET.get('after','')
     try:
-        journeys = Journey.objects.all().order_by(orderStr)
+        journeys = searchRoutes(toDestination,fromDestination,beforeDate,afterDate).order_by(orderStr)
     except:
         return JsonResponse({'status':404, 'error':'No Journeys in DB'})
+    # try:
+    #     journeys = Journey.objects.all().order_by(orderStr)
+    # except:
+    #     return JsonResponse({'status':404, 'error':'No Journeys in DB'})
 
     # paginate
     page = request.GET.get('page',1)
