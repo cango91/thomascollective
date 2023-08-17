@@ -128,9 +128,9 @@ def create_booking(request, journey_id):
 @login_required
 def my_bookings(request):
    # journey = Journey.objects.get(id=journey_id)
-    allbookings=Booking.objects.get(user__id=request.user.id)#request.user.booking_set.all()
+    allbookings=Booking.objects.filter(user__id=request.user.id)#request.user.booking_set.all()
     print(allbookings)
-    return render(request, 'booking/my_bookings.html')
+    return render(request, 'booking/my_bookings.html', {'allbookings':allbookings})
 
 ### AJAX ENDPOINTS ###
 

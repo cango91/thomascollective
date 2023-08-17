@@ -2,11 +2,11 @@
 {% block content %}
 <h1> YOUR TRIPS</h1>
 
-{% for booking in my_booking %}
+{% for booking in allbookings %}
 <ul class="card">
     <li>
         <ul>
-            <li>Journey: { booking.journey }</li>
+            <li>Journey: {{ booking.journey }}</li>
         </ul>
     </li>
 </ul>
