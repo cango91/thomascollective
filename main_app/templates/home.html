@@ -1,6 +1,76 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
+{% block parallax %}
+    <div class="parallax-container">
+        <div class="parallax">
+            <img src="{% static 'images/parallax_1.jpeg' %}">
+        </div>
+    </div>
+    <div class="white-container container">
+        <h1>The Thomas Collective</h1>
+        <h2>Welcome to Seamless Train Travel 🚄</h2>
+        <p>
+            Embark on a journey with us and discover a new way to travel by train. Experience convenience, comfort, and sustainability like never before:
+        </p>
+        <ul>
+            <li>
+                <p>🎫 Convenient scheduling for train and subway rides</p>
+            </li>
+            <li>
+                <p>🌿 Prepay for tickets and GO GREEN!</p>
+            </li>
+            <li>
+                <p>😌 Avoid unpleasant train rides easily</p>
+            </li>
+            <li>
+                <p>📍 Check locations and arrival points</p>
+            </li>
+        </ul>
+        <p>Join us now and make your train travel experience better!</p>
+    </div>
+    <div class="parallax-container">
+        <div class="parallax">
+            <img src="{% static 'images/parallax_2.jpeg' %}">
+        </div>
+    </div>
+{% endblock parallax %}
 {% block content %}
-
-<h1>The Thomas Collective</h1>
-
+<h2>Why Choose Us?</h2>
+<p>
+    With our innovative approach, we provide a user experience that stands out in the industry. Your satisfaction is our top priority.
+</p>
+<h2>How It Works</h2>
+<p>Three simple steps to an enjoyable train ride:</p>
+<ol>
+    <li>
+        <p>🔍 Search and select your desired route</p>
+    </li>
+    <li>
+        <p>💳 Pay for tickets online – save paper and time!</p>
+    </li>
+    <li>
+        <p>🚅 Enjoy a comfortable ride</p>
+    </li>
+</ol>
+<h2>Customer Testimonials</h2>
+<blockquote>
+    <p>"This app changed my daily commute. It's effortless and eco-friendly!" - Jane D.</p>
+</blockquote>
+<blockquote>
+    <p>"A must-have for frequent travelers. It's so convenient!" - Mike T.</p>
+</blockquote>
+<h2>Frequently Asked Questions</h2>
+<p>
+    <strong>Q:</strong> Can I reschedule my ride? <strong>A:</strong> Yes, rescheduling is easy and flexible.
+</p>
+<p>
+    <strong>Q:</strong> How do I pay? <strong>A:</strong> Multiple payment options are available, including credit and debit cards.
+</p>
+<p>Join us now and make your train travel experience better!</p>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const elems = document.querySelectorAll('.parallax');
+        const instances = M.Parallax.init(elems);
+      });
+    </script>
 {% endblock %}
