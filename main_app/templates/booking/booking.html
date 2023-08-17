@@ -14,13 +14,14 @@
        </ul>
        <ul>
          <li>Journey Info: {{booking.journey}}</li>
-         <li>Name of Passenger: {{booking.user.username}}</li>
+         <li>Name of Passenger: {{user.username}}</li>
          <li>Number of Passengers: {{booking.number_of_passengers}}</li>
          <li>Luggage Weight: {{booking.luggage_weight}}</li>
         </ul>
-
     </li>
-
 </ul>
-
+<form method="POST">
+    {% csrf_token %}
+  <input type="submit" value="Create Booking" class="'btn mb mt-1">  
+</form>
 {% endblock content %}

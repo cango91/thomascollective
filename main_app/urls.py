@@ -14,5 +14,6 @@ urlpatterns = [
     path('comment/<int:pk>/delete', views.CommentDelete.as_view(), name='delete_comment'),
     path('journeys/', views.journey_index, name='journey_index'),
     path('journeys/<int:journey_id>/', views.journey_detail, name='journey_detail'),
-    path('journeys/<int:journey_id>/booking/new', views.create_booking, name='create_booking')
+    path('journeys/<int:journey_id>/booking/new', views.create_booking, name='create_booking'),
+    path('booking/my_booking', views.my_booking, name='my_bookings'),
 ]
