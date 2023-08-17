@@ -2,14 +2,15 @@ from django.shortcuts import get_list_or_404, render, redirect, get_object_or_40
 from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
 from django.utils.timezone import now
-from .models import Train, Route, Booking, Comment, Journey
+from .models import Station, StationOrder, Train, Route, Booking, Comment, Journey
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from .forms import CommentForm, BookingForm
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.http import JsonResponse
+from django.db.models import OuterRef, Subquery
 
 
 def home(request):
@@ -144,27 +145,66 @@ def update_my_bookings(request, booking_id):
             booking.price = number_of_passengers * price_per_passenger
             
             form.save()
-            booking.save()
-            
+
             return redirect('my_bookings')
     else:
-        # Set the initial value for the price field
-        initial_data = {'price': booking.number_of_passengers * booking.price_per_passenger}
-        form = BookingForm(instance=booking, initial=initial_data)
-    
-    return render(request, 'booking/update_my_bookings.html', {'form': form, 'booking_id': booking_id})
+        form = BookingForm(instance=booking)
+    return render(request, 'booking/update_my_bookings.html',{'form':form, 'booking_id':booking_id})
+
+
+class BookingDelete(DeleteView):
+    model = Booking
+    template_name = 'booking/confirm_my_booking_delete.html'
+    success_url = reverse_lazy('my_bookings')
 
 
 
 
 
+### HELPER SEARCH FUNCTION ###
+
+def searchRoutes(toStop=None, fromStop=None, before=None, after=None):
+    station_order_query = StationOrder.objects.all()
+
+    # Handle multiple stops in single stop case using likeness matching
+    if (toStop or fromStop) and not (toStop and fromStop):
+        stop = toStop or fromStop
+        station_order_query = station_order_query.filter(station__name__icontains=stop)
+
+    # Handle multiple stops in to-from case using likeness matching
+    if toStop and fromStop:
+                # Finding the station orders for 'fromStop' and 'toStop'
+        station_orders_before = StationOrder.objects.filter(station__name__icontains=fromStop)
+        station_orders_after = StationOrder.objects.filter(station__name__icontains=toStop)
+
+        # Filtering based on the route and order to ensure 'toStop' comes after 'fromStop'
+        station_order_query = StationOrder.objects.filter(
+            route__in=station_orders_before.values('route'),
+            order__gt=Subquery(station_orders_before.filter(route=OuterRef('route')).values('order')),
+            id__in=station_orders_after
+        )
+        print(station_order_query)
+
+    routes = Route.objects.filter(stationorder__in=station_order_query).distinct()
+
+    # If filtering by dates, start with Journey model
+    journeys_query = Journey.objects.filter(route__in=routes)
+
+    # Apply date filters if provided
+    if before:
+        journeys_query = journeys_query.filter(departure_time__lt=before)
+    if after:
+        journeys_query = journeys_query.filter(departure_time__gt=after)
+
+    return journeys_query
 ### AJAX ENDPOINTS ###
 
 
 def getAllStopsForJourney(request, journey_id):
     try:
         route = Journey.objects.get(id=journey_id).route
-    except:
+    except Exception as e:
+        print(e)
         return JsonResponse({'status':404, 'error':'Journey/Route not found'})
     stops = route.stationorder_set.all().values_list('station__name','arrival_time','departure_time')
     stops_list = [{'station': stop[0], 'arrival': stop[1],'departure': stop[2]} for stop in stops]
@@ -176,11 +216,19 @@ def getAllJourneys(request):
     sortBy = request.GET.get('sortBy','departure_time')
     order = request.GET.get('order', 'ascending')
     orderStr = f"{'-' if order =='descending'  else ''}{sortBy}"
-    
+    toDestination = request.GET.get('toStop',None)
+    fromDestination = request.GET.get('fromStop',None)
+    beforeDate = request.GET.get('before',None)
+    afterDate = request.GET.get('after',None)
     try:
-        journeys = Journey.objects.all().order_by(orderStr)
-    except:
+        journeys = searchRoutes(toDestination,fromDestination,beforeDate,afterDate).order_by(orderStr)
+    except Exception as e:
+        print(e)
         return JsonResponse({'status':404, 'error':'No Journeys in DB'})
+    # try:
+    #     journeys = Journey.objects.all().order_by(orderStr)
+    # except:
+    #     return JsonResponse({'status':404, 'error':'No Journeys in DB'})
 
     # paginate
     page = request.GET.get('page',1)

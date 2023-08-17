@@ -19,4 +19,5 @@ urlpatterns = [
     path('ajax/journeys/<int:journey_id>/stops', views.getAllStopsForJourney, name='all_stops_for_journey'),
     path('ajax/journeys/', views.getAllJourneys, name='all_journeys'),
     path('booking/my_bookings/<int:booking_id>/update', views.update_my_bookings, name='update_my_bookings'),
+    path('mybookings/<int:pk>/delete', views.BookingDelete.as_view(), name='delete_booking'),
 ]
