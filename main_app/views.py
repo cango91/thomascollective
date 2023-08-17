@@ -115,17 +115,21 @@ def journey_detail(request, journey_id):
 @login_required
 def create_booking(request, journey_id):
     journey = Journey.objects.get(id=journey_id)
-    booking = BookingForm(request.POST)
-    booking.journey = journey
-    booking.user = request.user
-    if booking.is_valid():
-        booking.save()
+    booking_form = BookingForm(request.POST)
+    booking_form.instance.journey = journey
+    print(request.user.id)
+    booking_form.instance.user = request.user
+    if booking_form.is_valid():
+        booking_form.save()
         return redirect(reverse('my_bookings'))
-    return render(request, 'journey/journey_detail.html', {'journey': journey, 'booking_form': booking, 'stops': journey.route.stationorder_set.all(), 'error': 'Invalid Form Data'})
+    return render(request, 'journey/journey_detail.html', {'journey': journey, 'booking_form': booking_form, 'stops': journey.route.stationorder_set.all(), 'error': 'Invalid Form Data'})
 
 
 @login_required
 def my_bookings(request):
+   # journey = Journey.objects.get(id=journey_id)
+    allbookings=Booking.objects.get(user__id=request.user.id)#request.user.booking_set.all()
+    print(allbookings)
     return render(request, 'booking/my_bookings.html')
 
 ### AJAX ENDPOINTS ###

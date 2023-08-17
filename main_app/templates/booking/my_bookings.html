@@ -2,5 +2,13 @@
 {% block content %}
 <h1> YOUR TRIPS</h1>
 
-
+{% for booking in my_booking %}
+<ul class="card">
+    <li>
+        <ul>
+            <li>Journey: { booking.journey }</li>
+        </ul>
+    </li>
+</ul>
+{% endfor %}
 {% endblock content %}
