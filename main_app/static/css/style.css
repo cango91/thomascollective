@@ -89,4 +89,17 @@ span.star-rating * {
     position: absolute;
     width: 100%;
     bottom: 0 !important;
+    background-color: #306F78 !important;
+}
+
+.nav-wrapper {
+    background-color: #306F78!important;
+}
+
+.sidenav{
+    background-color: #306F78 !important;
+}
+
+.sidenav * {
+    color: #fff !important;
 }
