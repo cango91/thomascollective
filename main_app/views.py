@@ -185,9 +185,8 @@ def searchRoutes(toStop=None, fromStop=None, before=None, after=None):
             order__gt=Subquery(station_orders_before.filter(route=OuterRef('route')).values('order')),
             id__in=station_orders_after
         )
-        print(station_order_query)
 
-    routes = Route.objects.filter(stationorder__in=station_order_query).distinct()
+    routes = Route.objects.filter(station_orders__in=station_order_query).distinct()
 
     # If filtering by dates, start with Journey model
     journeys_query = Journey.objects.filter(route__in=routes)
