@@ -10,7 +10,7 @@
 <form action="" method="POST">
     {% csrf_token %}
     <a  class="btn waves-effect waves-light red" href="https://www.subway.com/en-us" target="_blank">Yes, Delete</a>
-    <a class="btn waves-effect waves-light" href="{% url 'train_detail' comment.train.id %}">Cancel</a>
+    <a class="btn waves-effect waves-light" href="{% url 'train_detail' train %}">Cancel</a>
   </form>
   <script>
     form = document.querySelector('form')
