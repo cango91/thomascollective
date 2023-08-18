@@ -49,9 +49,11 @@
               <a href="{% url 'journey_index' %}">Journeys</a>
             </li>
             {% if user.is_authenticated %}
+            {% if user.emailverification.is_verified %}
               <li>
                 <a href="{% url 'train_create' %}">Add a Train</a>
               </li>
+              {% endif %}
               <li>
                 <a href="{% url 'my_bookings' %}">My Bookings</a>
               </li>
@@ -84,9 +86,11 @@
         <a href="{% url 'journey_index' %}">Journeys</a>
       </li>
       {% if user.is_authenticated %}
+      {% if user.emailverification.is_verified %}
         <li>
           <a href="{% url 'train_create' %}">Add a Train</a>
         </li>
+      {% endif %}
         <li>
           <a href="{% url 'my_bookings' %}">My Bookings</a>
         </li>
