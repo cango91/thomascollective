@@ -88,3 +88,17 @@ License
 This project is licensed under the MIT License. See the LICENSE file for details.
 
 For any questions or support, feel free to contact us at contact@thomascollective.com.
+
+# Try it out!
+[Link to the Website](http://thethomascollective-71f5ee19c1ee.herokuapp.com/)
+
+[Our Trello Board](https://trello.com/b/eUnu8rCY/project-3)
+
+[The Pitch Deck](https://docs.google.com/presentation/d/1u403N_MwglCmDOl0F7XIioxW4kPmkm6t_YmS8srrqQc/edit?usp=sharing)
+
+# Screenshots
+<img src= https://cdn.discordapp.com/attachments/691762403742056479/1142140524359335996/Screenshot_2145.png>
+<img src= https://cdn.discordapp.com/attachments/691762403742056479/1142140245693968474/Screenshot_2139.png>
+<img src= https://cdn.discordapp.com/attachments/691762403742056479/1142140246180503592/Screenshot_2140.png>
+<img src= https://cdn.discordapp.com/attachments/691762403742056479/1142140246482489404/Screenshot_2141.png>
+<img src= https://cdn.discordapp.com/attachments/691762403742056479/1142140246763515925/Screenshot_2143.png>
