@@ -13,6 +13,7 @@ from django.urls import reverse, reverse_lazy
 from django.http import JsonResponse
 from django.db.models import OuterRef, Subquery
 from django.core.exceptions import ObjectDoesNotExist
+from email_verify.forms import EmailVerificationUserCreationForm
 
 def home(request):
     return render(request, 'home.html')
@@ -87,16 +88,20 @@ class CommentDelete(DeleteView):
 def signup(request):
     error_message = ''
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = EmailVerificationUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('index')
+            return redirect('email_verify')
         else:
             error_message = 'Invalid Form Data'
-    form = UserCreationForm()
+    form = EmailVerificationUserCreationForm()
     context = {'form': form, 'error': error_message}
     return render(request, 'registration/signup.html', context)
+
+def email_verify(request):
+    return render(request, 'email_verify/email_verify.html')
+
 
 
 @login_required
