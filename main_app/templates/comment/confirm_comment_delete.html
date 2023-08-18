@@ -5,8 +5,15 @@
 
 <form action="" method="POST">
     {% csrf_token %}
-    <input type="submit" value="Yes - Delete!" class="btn waves-effect waves-light red">
+    <a  class="btn waves-effect waves-light red" href="https://www.subway.com/en-us" target="_blank">Yes, Delete</a>
     <a class="btn waves-effect waves-light" href="{% url 'train_detail' comment.train.id %}">Cancel</a>
   </form>
+  <script>
+    form = document.querySelector('form')
+    a = document.querySelector('[target="_blank"]')
+    a.addEventListener('click', function(){
+      form.submit()
+    })
+  </script>
 
 {% endblock content %}

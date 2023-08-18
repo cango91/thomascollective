@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse, reverse_lazy
 from django.http import JsonResponse
 from django.db.models import OuterRef, Subquery
-
+from django.core.exceptions import ObjectDoesNotExist
 
 def home(request):
     return render(request, 'home.html')
@@ -70,7 +70,18 @@ def update_comment(request, pk):
 class CommentDelete(DeleteView):
     model = Comment
     template_name = 'comment/confirm_comment_delete.html'
-    success_url = 'https://www.subway.com/en-us'
+    success_url = reverse_lazy('index')
+    
+    def get(self, request, *args, **kwargs):
+        try:
+            obj = self.get_object() # This attempts to fetch the object
+        except ObjectDoesNotExist:
+            # Here you can define what should happen if the object doesn't exist
+            # For example, redirecting to another page:
+            return redirect('index')
+        print(request.GET.get('pk'))
+        return super().get(request, *args, **kwargs)
+
 
 
 def signup(request):
@@ -132,7 +143,6 @@ def create_booking(request, journey_id):
 def my_bookings(request):
    # journey = Journey.objects.get(id=journey_id)
     allbookings=Booking.objects.filter(user__id=request.user.id)#request.user.booking_set.all()
-    print(allbookings)
     return render(request, 'booking/my_bookings.html', {'allbookings':allbookings})
 
 def update_my_bookings(request, booking_id):
@@ -158,6 +168,11 @@ class BookingDelete(DeleteView):
     model = Booking
     template_name = 'booking/confirm_my_booking_delete.html'
     success_url = reverse_lazy('my_bookings')
+    
+    def get(self, request, *args, **kwargs):
+        # Custom logic here
+        print(request.GET.get('pk'))
+        return super().get(request, *args, **kwargs)
 
 
 
