@@ -51,7 +51,7 @@ def update_comment(request, pk):
         comment = get_object_or_404(Comment, id=pk)
         if form.is_valid():
             if not comment.user == request.user:
-                error_msg = "You are not allowed to edit this comment, because it does not belong to you"
+                error_msg = "You are not allowed to edit this comment, because it does not belong to you... AND YOU KNEW IT!"
                 return render(request, 'comment/edit_comment.html', {'form': form, 'comment': comment, 'error': error_msg})
             comment.content = request.POST.get('content')
             comment.rating = request.POST.get('rating')
@@ -81,8 +81,15 @@ class CommentDelete(DeleteView):
             # Here you can define what should happen if the object doesn't exist
             # For example, redirecting to another page:
             return redirect('index')
-        print(request.GET.get('pk'))
         return super().get(request, *args, **kwargs)
+    
+        
+    def post(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user != request.user:
+            error_msg = "You are not allowed to delete this comment, because it does not belong to you. And you probably know it"
+            return render(request, 'comment/confirm_comment_delete.html', {'error': error_msg})
+        return super().post(request, *args, **kwargs)
 
 
 

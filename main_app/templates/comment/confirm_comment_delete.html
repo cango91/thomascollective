@@ -2,7 +2,11 @@
 {% block content %}
 <h1>ARE YOU SURE YOU WISH TO DO THIS?🧐</h1>
 <h3>This action cannot be refuted</h3>
-
+{% if error %}
+<div class="card">
+    <p class="red-text">{{ error }}</p>
+</div>
+{% endif %}
 <form action="" method="POST">
     {% csrf_token %}
     <a  class="btn waves-effect waves-light red" href="https://www.subway.com/en-us" target="_blank">Yes, Delete</a>
