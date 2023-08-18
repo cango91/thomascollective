@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+{% block parallax %}
+<div class="parallax-container">
+    <div class="parallax" style="max-height: 450px">
+        <img src="{% static 'images/404.webp' %}">
+    </div>
+</div>
+<div class="white-container container">
+    <h1>Oops... Thomas couldn't find that!</h1>
+    <p>That thing you were looking for is gone...</p>
+    <p>Long gone...</p>
+    <p>Only smoke and ashes...</p>
+    <p>Thomas was finally happy, for real, for the first time...</p>
+</div>
+{% endblock parallax %}
+{% block content %}
+Go on get out of here!<br><br>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const elems = document.querySelectorAll('.parallax');
+        const instances = M.Parallax.init(elems);
+      });
+    </script>
+{% endblock content %}

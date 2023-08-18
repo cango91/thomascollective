@@ -24,12 +24,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-x2%7c2w8zznhw7bk0y!^!6+qiggdsf+y4vk#dtus7ukr8^8y_v'
+#SECRET_KEY = 'django-insecure-x2%7c2w8zznhw7bk0y!^!6+qiggdsf+y4vk#dtus7ukr8^8y_v'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['thethomascollective-71f5ee19c1ee.herokuapp.com','localhost']
 
 
 # Application definition
@@ -147,6 +148,41 @@ EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 EMAIL_USE_TLS = True
 EMAIL_VERIFY_FROM_ADDRESS = os.environ['EMAIL_VERIFY_FROM_ADDRESS']
 EMAIL_VERIFY_EXPIRES_IN = -1
+
+EMAIL_VERIFY_SUBJECT_LINE="The Thomas Collective Welcomes You"
+EMAIL_VERIFY_TEXT_MESSAGE="You are about to join one of the most prestigious traveling agencies on this planet! Copy and paste this link to your address bar and unleash your new powers: $:_VERIFICATION_LINK"
+EMAIL_VERIFY_HTML_MESSAGE="""<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6em;
+            margin: 0;
+            padding: 20px;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .content {
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <p>You are about to join one of the most prestigious traveling agencies on this planet! Copy and paste this link to your address bar and unleash your new powers: <a href="$:_VERIFICATION_LINK" target="_blank">Click Here</a></p>
+    </div>
+    <div>
+    <small>If you can not view the above link, copy and paste this URL in your address bar: $:_VERIFICATION_LINK</small>
+    </div>
+</body>
+</html>"""
 
 import django_on_heroku
 django_on_heroku.settings(locals(), databases=False, allowed_hosts=False)
