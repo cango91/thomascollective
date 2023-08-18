@@ -82,14 +82,15 @@ class CommentDelete(DeleteView):
             # Here you can define what should happen if the object doesn't exist
             # For example, redirecting to another page:
             return redirect('index')
-        return super().get(request, *args, **kwargs)
+        super().get(request, *args, **kwargs)
+        return render(request, self.template_name, {'train': obj.train.id} )
     
         
     def post(self, request, *args, **kwargs):
         obj = self.get_object()
         if obj.user != request.user:
             error_msg = "You are not allowed to delete this comment, because it does not belong to you. And you probably know it"
-            return render(request, 'comment/confirm_comment_delete.html', {'error': error_msg})
+            return render(request, 'comment/confirm_comment_delete.html', {'error': error_msg, 'train': obj.train.id})
         return super().post(request, *args, **kwargs)
 
 
