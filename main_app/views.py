@@ -14,6 +14,7 @@ from django.http import JsonResponse
 from django.db.models import OuterRef, Subquery
 from django.core.exceptions import ObjectDoesNotExist
 from email_verify.forms import EmailVerificationUserCreationForm
+from email_verify.mixins import UserVerifiedMixin
 
 def home(request):
     return render(request, 'home.html')
@@ -23,7 +24,7 @@ def about(request):
     return render(request, 'about.html')
 
 
-class TrainCreate(CreateView):
+class TrainCreate(UserVerifiedMixin, CreateView):
     model = Train
     fields = ['name', 'railway', 'capacity', 'cars']
     template_name = 'train/train_form.html'
