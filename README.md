@@ -90,7 +90,7 @@ This project is licensed under the MIT License. See the LICENSE file for details
 For any questions or support, feel free to contact us at contact@thomascollective.com.
 
 # Try it out!
-[Link to the Website](http://thethomascollective-71f5ee19c1ee.herokuapp.com/)
+[Link to the Website](https://thethomascollective-71f5ee19c1ee.herokuapp.com/)
 
 [Our Trello Board](https://trello.com/b/eUnu8rCY/project-3)
 
