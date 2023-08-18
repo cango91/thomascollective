@@ -2,6 +2,7 @@ from decimal import Decimal
 from django.shortcuts import get_list_or_404, render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
+from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 from .models import Station, StationOrder, Train, Route, Booking, Comment, Journey
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -98,7 +99,12 @@ def signup(request):
     if request.method == 'POST':
         form = EmailVerificationUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            try:
+                user = form.save()
+            except ValidationError as e:
+                error_message = f'Email already registered: {e}'
+                context = {'form': form, 'error': error_message}
+                return render(request, 'registration/signup.html', context)
             login(request, user)
             return redirect('email_verify')
         else:
