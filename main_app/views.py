@@ -180,7 +180,15 @@ class BookingDelete(DeleteView):
         print(request.GET.get('pk'))
         return super().get(request, *args, **kwargs)
 
+### CUSTOM ERROR VIEWS FOR PROD ###
+def custom_404(request,exception):
+    return render(request,'errors/404.html', status=404) 
 
+def custom_500(request):
+    return render(request,'errors/500.html', status=500)
+
+def test500(request):
+    raise ValueError
 
 
 

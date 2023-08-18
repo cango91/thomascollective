@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Train, Route, Station, StationOrder, Journey, Booking
-
+from email_verify.models import EmailVerification
 # Register your models here.
 
 # admin.site.register(Train)
@@ -14,3 +14,4 @@ admin.site.register(Station)
 admin.site.register(StationOrder)
 admin.site.register(Journey)
 admin.site.register(Booking)
+admin.site.register(EmailVerification)

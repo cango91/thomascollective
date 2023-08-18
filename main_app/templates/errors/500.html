@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+{% block parallax %}
+<div class="parallax-container">
+    <div class="parallax">
+        <img src="{% static 'images/503.webp' %}">
+    </div>
+</div>
+<div class="white-container container">
+    <h1>Stop right there!</h1>
+    <p>We know what you did</p>
+    <p>It's in our logs now</p>
+    <p>...</p>
+    <p>The Thomas Collective will remember this</p>
+</div>
+{% endblock parallax %}
+{% block content %}
+Go on get out of here!<br><br>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const elems = document.querySelectorAll('.parallax');
+        const instances = M.Parallax.init(elems);
+      });
+    </script>
+{% endblock content %}
