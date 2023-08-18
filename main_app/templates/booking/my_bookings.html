@@ -3,20 +3,22 @@
     <h1>YOUR TRIPS</h1>
     {% for booking in allbookings %}
         <ul class="card">
-            <li>
+            <li class="ml-2">
                 <ul>
+                  <div class="row">
                     <li>Journey: {{ booking.journey }}</li>
-                    <li>departure: {{ booking.journey.departure_time }}</li>
-                    <li>arrival: {{ booking.journey.arrival_time }}</li>
-                    <li>seat number: {{ booking.seat_number }}</li>
+                    <li>Departure: {{ booking.journey.departure_time }}</li>
+                    <li>Arrival: {{ booking.journey.arrival_time }}</li>
+                    <li>Seat Number: {{ booking.seat_number }}</li>
                     <li>Price: ${{ booking.price }}</li>
-                    <li>luggage weight: {{ booking.luggage_weight }}</li>
-                    <li>number of passengers: {{ booking.number_of_passengers }}</li>
+                    <li>Luggage Weight: {{ booking.luggage_weight }}</li>
+                    <li>Number of Passengers: {{ booking.number_of_passengers }}</li>
+                  </div>
                 </ul>
-                <div class="card">
-                    <a class="btn-small waves-effect waves-light"
+                <div class="card mb-2">
+                    <a class="btn-small waves-effect waves-light mb-2"
                        href="{% url 'update_my_bookings' booking.id %}">Update Booking</a>
-                    <a class="btn-small waves-effect waves-light red"
+                    <a class="btn-small waves-effect waves-light red mb-2"
                        href="{% url 'delete_booking' booking.id %}">Delete Booking</a>
                 </div>
             </li>
