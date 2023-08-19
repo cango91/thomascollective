@@ -31,7 +31,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = False
 
 ALLOWED_HOSTS = ['thomas-collective-mirror-b5c42af6481f.herokuapp.com']
-
+#ALLOWED_HOSTS = ['localhost']
 
 # Application definition
 
@@ -58,7 +58,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CSRF_FAILURE_VIEW = 'main_app.views.custom_403'
+#CSRF_FAILURE_VIEW = 'main_app.views.custom_403'
 
 ROOT_URLCONF = 'thomascollective.urls'
 

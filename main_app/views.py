@@ -1,9 +1,8 @@
 from decimal import Decimal
 import logging
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, PermissionDenied
 from django.utils.timezone import now
 from .models import StationOrder, Train, Route, Booking, Comment, Journey
 from django.views.generic.edit import CreateView, DeleteView
@@ -173,7 +172,7 @@ def my_bookings(request):
 def update_my_bookings(request, booking_id):
     booking = Booking.objects.get(id=booking_id)
     if not request.user == booking.user:
-        return HttpResponseForbidden(request)
+        raise PermissionDenied()
     if request.method == 'POST':
         form = BookingForm(request.POST, instance=booking)
         if form.is_valid():
@@ -198,7 +197,7 @@ class BookingDelete(LoginRequiredMixin, DeleteView):
     ## New code below ##
     def dispatch(self, request, *args, **kwargs):
         if not request.user == self.get_object().user :
-            return HttpResponseForbidden(request) # Redirect to a specific page or logout
+            raise PermissionDenied()
         return super().dispatch(request, *args, **kwargs)
 
 ### CUSTOM ERROR VIEWS FOR PROD ###
@@ -208,10 +207,8 @@ def custom_404(request,exception):
 def custom_500(request):
     return render(request,'errors/500.html', status=500)
 
-def custom_403(request,exception):
-    logging.error('i be invoked')
-    print('i was invoked')
-    return render(request,'errors/500.html', status=403)
+def custom_403(request, exception):
+    return render(request,'errors/403.html', status=403)
 
 ### HELPER SEARCH FUNCTION ###
 
