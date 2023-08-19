@@ -30,7 +30,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['thethomascollective-71f5ee19c1ee.herokuapp.com']
+ALLOWED_HOSTS = ['thomas-collective-mirror-b5c42af6481f.herokuapp.com/']
 
 
 # Application definition
