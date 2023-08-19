@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
-{%  block header %}
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/star-ratings.css' %}">
   <script src="{% static 'js/star-ratings.js' %}" defer></script>
-{% endblock %}
+{% endblock header %}
 {% block content %}
   <h1>All Trains</h1>
   <table class="highlight" id="click">
