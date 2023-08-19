@@ -1,5 +1,4 @@
 from decimal import Decimal
-import logging
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.core.exceptions import ValidationError, PermissionDenied
@@ -39,7 +38,7 @@ def train_index(request):
 
 
 def train_detail(request, train_id):
-    train = Train.objects.get(id=train_id)
+    train = get_object_or_404(Train, id=train_id)
     comments = train.comments.all()
     form = CommentForm()
 
@@ -150,7 +149,7 @@ def journey_detail(request, journey_id):
 
 @login_required
 def create_booking(request, journey_id):
-    journey = Journey.objects.get(id=journey_id)
+    journey = get_object_or_404(Journey,id=journey_id)
     booking_form = BookingForm(request.POST)
     if booking_form.is_valid():
         booking = booking_form.save(commit=False)
@@ -170,7 +169,7 @@ def my_bookings(request):
 
 @login_required
 def update_my_bookings(request, booking_id):
-    booking = Booking.objects.get(id=booking_id)
+    booking = get_object_or_404(Booking,id=booking_id)
     if not request.user == booking.user:
         raise PermissionDenied()
     if request.method == 'POST':
@@ -273,12 +272,6 @@ def getAllJourneys(request):
     except Exception as e:
         print(e)
         return JsonResponse({'status':404, 'error':'No Journeys in DB'})
-    # try:
-    #     journeys = Journey.objects.all().order_by(orderStr)
-    # except:
-    #     return JsonResponse({'status':404, 'error':'No Journeys in DB'})
-
-    # paginate
     page = request.GET.get('page',1)
     perPage = request.GET.get('limit', 10)
     
