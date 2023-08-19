@@ -1,4 +1,5 @@
 from decimal import Decimal
+import logging
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
@@ -208,6 +209,8 @@ def custom_500(request):
     return render(request,'errors/500.html', status=500)
 
 def custom_403(request,exception):
+    logging.error('i be invoked')
+    print('i was invoked')
     return render(request,'errors/500.html', status=403)
 
 ### HELPER SEARCH FUNCTION ###
