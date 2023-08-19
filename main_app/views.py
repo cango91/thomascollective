@@ -210,7 +210,6 @@ def custom_500(request):
 def custom_403(request,exception):
     return render(request,'errors/500.html', status=403)
 
-
 ### HELPER SEARCH FUNCTION ###
 
 def searchRoutes(toStop=None, fromStop=None, before=None, after=None):
