@@ -1,0 +1,35 @@
+span.star-rating * {
+    vertical-align: middle;
+    color: #daa520;
+}
+
+.star-container {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.star-container * {
+    vertical-align: middle;
+    color: #daa520;
+}
+
+.star-container:not(.editing) .star:not(.star-filled)::after {
+    content: 'star_border';
+}
+
+.star-container:not(.editing) .star:is(.star-filled)::after {
+    content: 'star';
+}
+
+.star-container.editing .star::after {
+    content: "star_border";
+}
+
+.star-container.editing .star:hover~.star::after {
+    content: "star";
+}
+
+.star-container.editing .star:hover::after {
+    content: "star";
+    cursor: pointer;
+}
