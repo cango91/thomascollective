@@ -58,6 +58,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CSRF_FAILURE_VIEW = 'main_app.views.custom_403'
+
 ROOT_URLCONF = 'thomascollective.urls'
 
 TEMPLATES = [
