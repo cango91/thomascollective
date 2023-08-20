@@ -1,15 +1,14 @@
 from decimal import Decimal
-from django.shortcuts import get_list_or_404, render, redirect, get_object_or_404
-from django.http import HttpResponseForbidden
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, PermissionDenied
 from django.utils.timezone import now
-from .models import Station, StationOrder, Train, Route, Booking, Comment, Journey
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.contrib.auth import login
-from django.contrib.auth.forms import UserCreationForm
+from .models import StationOrder, Train, Route, Booking, Comment, Journey
+from django.views.generic.edit import CreateView, DeleteView
+from django.contrib.auth import login, logout
 from .forms import CommentForm, BookingForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
 from django.http import JsonResponse
 from django.db.models import OuterRef, Subquery
@@ -39,7 +38,7 @@ def train_index(request):
 
 
 def train_detail(request, train_id):
-    train = Train.objects.get(id=train_id)
+    train = get_object_or_404(Train, id=train_id)
     comments = train.comments.all()
     form = CommentForm()
 
@@ -110,6 +109,9 @@ def signup(request):
             return redirect('email_verify')
         else:
             error_message = 'Invalid Form Data'
+    # if the user is logged in and wants to signup again, log them out first
+    if request.user.is_authenticated:
+        logout(request)
     form = EmailVerificationUserCreationForm()
     context = {'form': form, 'error': error_message}
     return render(request, 'registration/signup.html', context)
@@ -147,7 +149,7 @@ def journey_detail(request, journey_id):
 
 @login_required
 def create_booking(request, journey_id):
-    journey = Journey.objects.get(id=journey_id)
+    journey = get_object_or_404(Journey,id=journey_id)
     booking_form = BookingForm(request.POST)
     if booking_form.is_valid():
         booking = booking_form.save(commit=False)
@@ -165,9 +167,11 @@ def my_bookings(request):
     allbookings=Booking.objects.filter(user__id=request.user.id)#request.user.booking_set.all()
     return render(request, 'booking/my_bookings.html', {'allbookings':allbookings})
 
+@login_required
 def update_my_bookings(request, booking_id):
-    booking = Booking.objects.get(id=booking_id)
-    
+    booking = get_object_or_404(Booking,id=booking_id)
+    if not request.user == booking.user:
+        raise PermissionDenied()
     if request.method == 'POST':
         form = BookingForm(request.POST, instance=booking)
         if form.is_valid():
@@ -184,15 +188,16 @@ def update_my_bookings(request, booking_id):
     return render(request, 'booking/update_my_bookings.html',{'form':form, 'booking_id':booking_id})
 
 
-class BookingDelete(DeleteView):
+class BookingDelete(LoginRequiredMixin, DeleteView):
     model = Booking
     template_name = 'booking/confirm_my_booking_delete.html'
     success_url = reverse_lazy('my_bookings')
     
-    def get(self, request, *args, **kwargs):
-        # Custom logic here
-        print(request.GET.get('pk'))
-        return super().get(request, *args, **kwargs)
+    ## New code below ##
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user == self.get_object().user :
+            raise PermissionDenied()
+        return super().dispatch(request, *args, **kwargs)
 
 ### CUSTOM ERROR VIEWS FOR PROD ###
 def custom_404(request,exception):
@@ -201,6 +206,8 @@ def custom_404(request,exception):
 def custom_500(request):
     return render(request,'errors/500.html', status=500)
 
+def custom_403(request, exception):
+    return render(request,'errors/403.html', status=403)
 
 ### HELPER SEARCH FUNCTION ###
 
@@ -265,12 +272,6 @@ def getAllJourneys(request):
     except Exception as e:
         print(e)
         return JsonResponse({'status':404, 'error':'No Journeys in DB'})
-    # try:
-    #     journeys = Journey.objects.all().order_by(orderStr)
-    # except:
-    #     return JsonResponse({'status':404, 'error':'No Journeys in DB'})
-
-    # paginate
     page = request.GET.get('page',1)
     perPage = request.GET.get('limit', 10)
     

@@ -26,7 +26,7 @@
     <header class="navbar-fixed">
       <nav>
         <div class="nav-wrapper">
-          <a href="#!" class="brand-logo mt-1 ml-1">
+          <a href="{% url 'home' %}" class="brand-logo mt-1 ml-1">
             <img src="{% static 'images/logolarge.webp' %}"
                  height=""
                  width=""
@@ -128,7 +128,7 @@
     </script>
     <footer class="page-footer">
       {% block footer %}
-       <div class="right-align mr-2 mb-1">All Rights Reserved, © 2022 The Thomas Collective (A Subway Partner)</div>
+       <div class="right-align mr-2 mb-1">All Rights Reserved, © 2023 The Thomas Collective (A Subway Partner)</div>
       {% endblock footer %}
     </footer>  
   </body>

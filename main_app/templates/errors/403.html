@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+{% block parallax %}
+<div class="parallax-container">
+    <div class="parallax">
+        <img src="{% static 'images/403.webp' %}">
+    </div>
+</div>
+<div class="white-container container">
+    <h1>Stop right there, criminal scum!</h1>
+    <h2>Stop! You violated the law</h2>
+    <p>Picking up pumpkins in Cyrodiil is forbidden by law!</p>
+    <p>Pay the fine or go to jail</p>
+    <p>...</p>
+    <p>Fine, I'll look the other way this once</p>
+</div>
+{% endblock parallax %}
+{% block content %}
+Go on get out of here!<br><br>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const elems = document.querySelectorAll('.parallax');
+        const instances = M.Parallax.init(elems);
+      });
+    </script>
+{% endblock content %}
